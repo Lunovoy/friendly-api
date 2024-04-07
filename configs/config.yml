@@ -3,6 +3,6 @@ port: 8080
 db:
     host: localhost
     port: 5432
-    username: postgres
+    username: friendly_admin
     dbname: friendly_db
     sslmode: disable
