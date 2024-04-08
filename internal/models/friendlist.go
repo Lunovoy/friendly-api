@@ -1,6 +1,8 @@
 package models
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type Friendlist struct {
 	ID          uuid.UUID `json:"id,omitempty" db:"id"`
@@ -19,6 +21,11 @@ type FriendlistsFriends struct {
 	ID           uuid.UUID `json:"id,omitempty" db:"id"`
 	FriendlistID uuid.UUID `json:"friendlist_id" db:"friendlist_id"`
 	FriendID     uuid.UUID `json:"friend_id" db:"friend_id"`
+}
+
+type FriendlistWithTags struct {
+	Friendlist Friendlist `json:"friendlist"`
+	Tags       []Tag      `json:"tags"`
 }
 
 type AdditionTagToFriendlist struct {
