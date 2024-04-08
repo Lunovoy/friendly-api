@@ -7,12 +7,11 @@ import (
 )
 
 type Friend struct {
-	ID         uuid.UUID `json:"id,omitempty" db:"id"`
-	FirstName  string    `json:"first_name" db:"first_name"`
-	LastName   string    `json:"last_name" db:"last_name"`
-	MiddleName string    `json:"middle_name" db:"middle_name"`
-	DOB        time.Time `json:"dob" db:"dob"`
-	UserID     uuid.UUID `json:"user_id" db:"user_id"`
+	ID        uuid.UUID `json:"id,omitempty" db:"id"`
+	FirstName string    `json:"first_name" db:"first_name"`
+	LastName  string    `json:"last_name" db:"last_name"`
+	DOB       time.Time `json:"dob" db:"dob"`
+	UserID    uuid.UUID `json:"user_id" db:"user_id"`
 }
 
 type FriendWorkInfo struct {

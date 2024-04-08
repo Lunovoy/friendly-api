@@ -27,9 +27,9 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.Friend, workInfo
 	defer tx.Rollback()
 
 	var friendID uuid.UUID
-	queryFriend := fmt.Sprintf("INSERT INTO \"%s\" (first_name, last_name , middle_name, dob, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING id", friendTable)
+	queryFriend := fmt.Sprintf("INSERT INTO \"%s\" (first_name, last_name , dob, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING id", friendTable)
 
-	rowFriend := tx.QueryRow(queryFriend, friend.FirstName, friend.LastName, friend.MiddleName, friend.DOB, userID)
+	rowFriend := tx.QueryRow(queryFriend, friend.FirstName, friend.LastName, friend.DOB, userID)
 	if err := rowFriend.Scan(&friendID); err != nil {
 		return models.FriendIDWorkInfoID{}, err
 	}
@@ -58,7 +58,7 @@ func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, erro
 	defer tx.Rollback()
 
 	var friends []models.Friend
-	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, middle_name, dob, user_id FROM %s WHERE user_id = $1", friendTable)
+	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, dob, user_id FROM %s WHERE user_id = $1", friendTable)
 	err = tx.Select(&friends, friendQuery, userID)
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 	defer tx.Rollback()
 
 	var friend models.Friend
-	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, middle_name, dob, user_id FROM %s WHERE id = $1 AND user_id = $2", friendTable)
+	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, dob, user_id FROM %s WHERE id = $1 AND user_id = $2", friendTable)
 	err = tx.Get(&friend, friendQuery, friendID, userID)
 	if err != nil {
 		return models.FriendWorkInfo{}, err
@@ -133,9 +133,9 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 }
 
 func (r *FriendPostgres) Update(userID, FriendID uuid.UUID, friend models.Friend) error {
-	query := fmt.Sprintf("UPDATE %s SET first_name = $1, last_name = $2, middle_name = $3, dob = $4 WHERE id = $3 AND user_id = $4", friendTable)
+	query := fmt.Sprintf("UPDATE %s SET first_name = $1, last_name = $2, dob = $3 WHERE id = $4 AND user_id = $5", friendTable)
 
-	_, err := r.db.Exec(query, friend.FirstName, friend.LastName, friend.MiddleName, friend.DOB, FriendID, userID)
+	_, err := r.db.Exec(query, friend.FirstName, friend.LastName, friend.DOB, FriendID, userID)
 
 	return err
 }
