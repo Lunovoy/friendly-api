@@ -57,8 +57,6 @@ func (r *FriendlistPostgres) GetByID(userID, friendlistID uuid.UUID) (models.Fri
 	}
 	defer tx.Rollback()
 
-	var friendlistWithTags models.FriendlistWithTags
-
 	var friendlist models.Friendlist
 
 	queryFriendlist := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
@@ -73,12 +71,17 @@ func (r *FriendlistPostgres) GetByID(userID, friendlistID uuid.UUID) (models.Fri
 							WHERE ft.friendlist_id = $1`, tagTable, friendlistsTagsTable)
 
 	var tags []models.Tag
-	if err := tx.Select(&tags, queryTags, friendlistID); err != nil {
+	if err := tx.Select(&tags, queryTags, friendlist.ID); err != nil {
 		return models.FriendlistWithTags{}, err
 	}
 
 	if err := tx.Commit(); err != nil {
 		return models.FriendlistWithTags{}, err
+	}
+
+	friendlistWithTags := models.FriendlistWithTags{
+		Friendlist: friendlist,
+		Tags:       tags,
 	}
 
 	return friendlistWithTags, err
