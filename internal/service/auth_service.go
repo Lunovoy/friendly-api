@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -104,7 +103,6 @@ func generateHash(password, salt []byte) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fmt.Println("Generated from register:", string(hash))
 	return base64.StdEncoding.EncodeToString(hash), err
 }
 
