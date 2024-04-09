@@ -115,6 +115,48 @@ func (h *Handler) getFriendlistByIDWithTags(c *gin.Context) {
 	})
 }
 
+func (h *Handler) getAllFriendlistsWithFriends(c *gin.Context) {
+	userID, err := getUserIDFromCtx(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
+		return
+	}
+
+	friendlists, err := h.services.Friendlist.GetAllWithFriends(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]any{
+		"friendlists": friendlists,
+	})
+}
+
+func (h *Handler) getFriendlistByIDWithFriends(c *gin.Context) {
+	userID, err := getUserIDFromCtx(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
+		return
+	}
+
+	friendlistID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "invalid id param")
+		return
+	}
+
+	friendlist, err := h.services.Friendlist.GetByIDWithFriends(userID, friendlistID)
+	if err != nil {
+		newErrorResponse(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]any{
+		"friendlist": friendlist,
+	})
+}
+
 func (h *Handler) updateFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -326,7 +368,7 @@ func (h *Handler) deleteFriendFromFriendlist(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Friendlist.DeleteTagFromFriendlist(friendlistID, friendID)
+	err = h.services.Friendlist.DeleteFriendFromFriendlist(friendlistID, friendID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

@@ -36,6 +36,14 @@ func (s *FriendlistService) GetByIDWithTags(userID, friendlistID uuid.UUID) (mod
 	return s.repo.GetByIDWithTags(userID, friendlistID)
 }
 
+func (s *FriendlistService) GetAllWithFriends(userID uuid.UUID) ([]models.FriendlistWithFriends, error) {
+	return s.repo.GetAllWithFriends(userID)
+}
+
+func (s *FriendlistService) GetByIDWithFriends(userID, friendlistID uuid.UUID) (models.FriendlistWithFriends, error) {
+	return s.repo.GetByIDWithFriends(userID, friendlistID)
+}
+
 func (s *FriendlistService) Update(userID, friendlistID uuid.UUID, friendlist models.Friendlist) error {
 	return s.repo.Update(userID, friendlistID, friendlist)
 }

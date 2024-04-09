@@ -142,6 +142,87 @@ func (r *FriendlistPostgres) GetByIDWithTags(userID, friendlistID uuid.UUID) (mo
 	return friendlistWithTags, err
 }
 
+func (r *FriendlistPostgres) GetAllWithFriends(userID uuid.UUID) ([]models.FriendlistWithFriends, error) {
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	var friendlists []models.Friendlist
+
+	queryFriendlists := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE user_id = $1", friendlistTable)
+
+	if err := tx.Select(&friendlists, queryFriendlists, userID); err != nil {
+		return nil, err
+	}
+
+	queryFriends := fmt.Sprintf(`SELECT f.* 
+							FROM %s f
+							INNER JOIN %s ff ON ff.friend_id = f.id 
+							WHERE ff.friendlist_id = $1`, friendTable, friendlistsFriendsTable)
+
+	stmt, err := tx.Preparex(queryFriends)
+	if err != nil {
+		return nil, err
+	}
+
+	var friendlistsWithFriends []models.FriendlistWithFriends
+
+	var friends []models.Friend
+	for _, friendlist := range friendlists {
+
+		if err := stmt.Select(&friends, friendlist.ID); err != nil {
+			return nil, err
+		}
+		friendlistsWithFriends = append(friendlistsWithFriends, models.FriendlistWithFriends{
+			Friendlist: friendlist,
+			Friends:    friends,
+		})
+		friends = nil
+	}
+
+	return friendlistsWithFriends, err
+
+}
+
+func (r *FriendlistPostgres) GetByIDWithFriends(userID, friendlistID uuid.UUID) (models.FriendlistWithFriends, error) {
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return models.FriendlistWithFriends{}, err
+	}
+	defer tx.Rollback()
+
+	var friendlist models.Friendlist
+
+	queryFriendlist := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
+
+	if err := tx.Get(&friendlist, queryFriendlist, friendlistID, userID); err != nil {
+		return models.FriendlistWithFriends{}, err
+	}
+
+	queryFriends := fmt.Sprintf(`SELECT f.* 
+							FROM %s f
+							INNER JOIN %s ff ON ff.friend_id = f.id 
+							WHERE ff.friendlist_id = $1`, friendTable, friendlistsFriendsTable)
+
+	var friends []models.Friend
+	if err := tx.Select(&friends, queryFriends, friendlist.ID); err != nil {
+		return models.FriendlistWithFriends{}, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return models.FriendlistWithFriends{}, err
+	}
+
+	friendlistWithFriends := models.FriendlistWithFriends{
+		Friendlist: friendlist,
+		Friends:    friends,
+	}
+
+	return friendlistWithFriends, err
+}
+
 func (r *FriendlistPostgres) Update(userID, friendlistID uuid.UUID, friendlist models.Friendlist) error {
 	query := fmt.Sprintf("UPDATE %s SET title = $1, description = $2 WHERE id = $3 AND user_id = $4", friendlistTable)
 

@@ -27,7 +27,7 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.Friend, workInfo
 	defer tx.Rollback()
 
 	var friendID uuid.UUID
-	queryFriend := fmt.Sprintf("INSERT INTO \"%s\" (first_name, last_name , dob, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING id", friendTable)
+	queryFriend := fmt.Sprintf("INSERT INTO \"%s\" (first_name, last_name , dob, user_id) VALUES ($1, $2, $3, $4) RETURNING id", friendTable)
 
 	rowFriend := tx.QueryRow(queryFriend, friend.FirstName, friend.LastName, friend.DOB, userID)
 	if err := rowFriend.Scan(&friendID); err != nil {

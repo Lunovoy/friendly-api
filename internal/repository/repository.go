@@ -26,6 +26,8 @@ type Friendlist interface {
 	GetByID(userID, friendlistID uuid.UUID) (models.Friendlist, error)
 	GetAllWithTags(userID uuid.UUID) ([]models.FriendlistWithTags, error)
 	GetByIDWithTags(userID, friendlistID uuid.UUID) (models.FriendlistWithTags, error)
+	GetAllWithFriends(userID uuid.UUID) ([]models.FriendlistWithFriends, error)
+	GetByIDWithFriends(userID, friendlistID uuid.UUID) (models.FriendlistWithFriends, error)
 	Update(userID, friendlistID uuid.UUID, friendlist models.Friendlist) error
 	AddTagToFriendlist(friendlistID, tagID uuid.UUID) error
 	DeleteTagFromFriendlist(friendlistID, tagID uuid.UUID) error
