@@ -73,6 +73,7 @@ func (h *Handler) getFriendByID(c *gin.Context) {
 		"friend": friend,
 	})
 }
+
 func (h *Handler) updateFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -80,25 +81,25 @@ func (h *Handler) updateFriend(c *gin.Context) {
 		return
 	}
 
-	friendlistID, err := uuid.Parse(c.Param("id"))
+	friendID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "invalid id param")
 		return
 	}
 
-	var payload models.Friendlist
+	var payload models.FriendWorkInfo
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	_, err = h.services.Friendlist.GetByID(userID, friendlistID)
+	_, err = h.services.Friend.GetByID(userID, friendID)
 	if err != nil {
 		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("friendlist not found: %s", err.Error()))
 		return
 	}
 
-	err = h.services.Friendlist.Update(userID, friendlistID, payload)
+	err = h.services.Friend.Update(userID, friendID, payload)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -116,19 +117,19 @@ func (h *Handler) deleteFriend(c *gin.Context) {
 		return
 	}
 
-	friendlistID, err := uuid.Parse(c.Param("id"))
+	friendID, err := uuid.Parse(c.Param("id"))
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "invalid id param")
 		return
 	}
 
-	_, err = h.services.Friendlist.GetByID(userID, friendlistID)
+	_, err = h.services.Friend.GetByID(userID, friendID)
 	if err != nil {
-		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("friendlist not found or already deleted: %s", err.Error()))
+		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("friend not found or already deleted: %s", err.Error()))
 		return
 	}
 
-	err = h.services.Friendlist.DeleteByID(userID, friendlistID)
+	err = h.services.Friend.DeleteByID(userID, friendID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

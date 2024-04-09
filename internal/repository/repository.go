@@ -40,7 +40,7 @@ type Friend interface {
 	Create(userID uuid.UUID, friend models.Friend, workInfo models.WorkInfo) (models.FriendIDWorkInfoID, error)
 	GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, error)
 	GetByID(userID, friendID uuid.UUID) (models.FriendWorkInfo, error)
-	Update(userID, friendID uuid.UUID, friend models.Friend) error
+	Update(userID, friendID uuid.UUID, friend models.FriendWorkInfo) error
 	DeleteByID(userID, friendID uuid.UUID) error
 }
 

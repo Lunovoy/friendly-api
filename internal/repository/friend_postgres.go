@@ -132,10 +132,30 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 	return friendWorkInfo, nil
 }
 
-func (r *FriendPostgres) Update(userID, FriendID uuid.UUID, friend models.Friend) error {
-	query := fmt.Sprintf("UPDATE %s SET first_name = $1, last_name = $2, dob = $3 WHERE id = $4 AND user_id = $5", friendTable)
+func (r *FriendPostgres) Update(userID, FriendID uuid.UUID, friend models.FriendWorkInfo) error {
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
 
-	_, err := r.db.Exec(query, friend.FirstName, friend.LastName, friend.DOB, FriendID, userID)
+	queryFriend := fmt.Sprintf("UPDATE %s SET first_name = $1, last_name = $2, dob = $3 WHERE id = $4 AND user_id = $5", friendTable)
+
+	_, err = r.db.Exec(queryFriend, friend.Friend.FirstName, friend.Friend.LastName, friend.Friend.DOB, FriendID, userID)
+	if err != nil {
+		return err
+	}
+
+	queryWorkInfo := fmt.Sprintf("UPDATE %s SET country = $1, city = $2, company = $3, position = $4, messenger = $5, communication_method = $6, nationality = $7 WHERE friend_id = $8", workInfoTable)
+
+	_, err = r.db.Exec(queryWorkInfo, friend.WorkInfo.Country, friend.WorkInfo.City, friend.WorkInfo.Company, friend.WorkInfo.Position, friend.WorkInfo.Messenger, friend.WorkInfo.CommunicationMethod, friend.WorkInfo.Nationality, FriendID)
+	if err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
 
 	return err
 }
