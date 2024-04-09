@@ -199,6 +199,16 @@ func (r *FriendlistPostgres) AddFriendToFriendlist(friendlistID, friendID uuid.U
 }
 
 func (r *FriendlistPostgres) DeleteTagFromFriendlist(friendlistID, tagID uuid.UUID) error {
+	var exists bool
+	queryCheck := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE friendlist_id = $1 AND tag_id = $2)", friendlistsTagsTable)
+
+	if err := r.db.Get(&exists, queryCheck, friendlistID, tagID); err != nil {
+		return err
+	}
+	if !exists {
+		return errors.New("tag already removed from friendlist")
+	}
+
 	query := fmt.Sprintf("DELETE FROM %s where friendlist_id=$1 AND tag_id=$2", friendlistsTagsTable)
 
 	_, err := r.db.Exec(query, friendlistID, tagID)
@@ -210,9 +220,19 @@ func (r *FriendlistPostgres) DeleteTagFromFriendlist(friendlistID, tagID uuid.UU
 }
 
 func (r *FriendlistPostgres) DeleteFriendFromFriendlist(friendlistID, friendID uuid.UUID) error {
-	query := fmt.Sprintf("DELETE FROM %s where friendlist_id=$1 AND friend_id=$2", friendlistsFriendsTable)
+	var exists bool
+	queryCheck := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE friendlist_id = $1 AND friend_id = $2)", friendlistsFriendsTable)
 
-	_, err := r.db.Exec(query, friendlistID, friendID)
+	if err := r.db.Get(&exists, queryCheck, friendlistID, friendID); err != nil {
+		return err
+	}
+	if !exists {
+		return errors.New("friend already removed from friendlist")
+	}
+
+	queryDelete := fmt.Sprintf("DELETE FROM %s where friendlist_id=$1 AND friend_id=$2", friendlistsFriendsTable)
+
+	_, err := r.db.Exec(queryDelete, friendlistID, friendID)
 	if err != nil {
 		return err
 	}
