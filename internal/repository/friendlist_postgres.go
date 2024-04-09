@@ -39,8 +39,8 @@ func (r *FriendlistPostgres) Create(userID uuid.UUID, friendlist models.Friendli
 	return friendlistID, err
 }
 
-func (r *FriendlistPostgres) GetAll(userID uuid.UUID) ([]models.FriendlistWithTags, error) {
-	var friendlists []models.FriendlistWithTags
+func (r *FriendlistPostgres) GetAll(userID uuid.UUID) ([]models.Friendlist, error) {
+	var friendlists []models.Friendlist
 
 	query := fmt.Sprintf("SELECT id, title, description, user_id FROM %s where user_id = $1", friendlistTable)
 
@@ -50,7 +50,61 @@ func (r *FriendlistPostgres) GetAll(userID uuid.UUID) ([]models.FriendlistWithTa
 
 }
 
-func (r *FriendlistPostgres) GetByID(userID, friendlistID uuid.UUID) (models.FriendlistWithTags, error) {
+func (r *FriendlistPostgres) GetByID(userID, friendlistID uuid.UUID) (models.Friendlist, error) {
+	var friendlist models.Friendlist
+
+	query := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
+
+	err := r.db.Get(&friendlist, query, friendlistID, userID)
+
+	return friendlist, err
+}
+
+func (r *FriendlistPostgres) GetAllWithTags(userID uuid.UUID) ([]models.FriendlistWithTags, error) {
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	var friendlists []models.Friendlist
+
+	queryFriendlists := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE user_id = $1", friendlistTable)
+
+	if err := tx.Select(&friendlists, queryFriendlists, userID); err != nil {
+		return nil, err
+	}
+
+	queryTags := fmt.Sprintf(`SELECT t.id, t.title, t.user_id 
+							FROM %s t
+							INNER JOIN %s ft ON ft.tag_id = t.id 
+							WHERE ft.friendlist_id = $1`, tagTable, friendlistsTagsTable)
+
+	stmt, err := tx.Preparex(queryTags)
+	if err != nil {
+		return nil, err
+	}
+
+	var friendlistsWithTags []models.FriendlistWithTags
+
+	var tags []models.Tag
+	for _, friendlist := range friendlists {
+
+		if err := stmt.Select(&tags, friendlist.ID); err != nil {
+			return nil, err
+		}
+		friendlistsWithTags = append(friendlistsWithTags, models.FriendlistWithTags{
+			Friendlist: friendlist,
+			Tags:       tags,
+		})
+		tags = nil
+	}
+
+	return friendlistsWithTags, err
+
+}
+
+func (r *FriendlistPostgres) GetByIDWithTags(userID, friendlistID uuid.UUID) (models.FriendlistWithTags, error) {
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return models.FriendlistWithTags{}, err
@@ -65,7 +119,7 @@ func (r *FriendlistPostgres) GetByID(userID, friendlistID uuid.UUID) (models.Fri
 		return models.FriendlistWithTags{}, err
 	}
 
-	queryTags := fmt.Sprintf(`SELECT t.id, t.title 
+	queryTags := fmt.Sprintf(`SELECT t.id, t.title, t.user_id 
 							FROM %s t
 							INNER JOIN %s ft ON ft.tag_id = t.id 
 							WHERE ft.friendlist_id = $1`, tagTable, friendlistsTagsTable)

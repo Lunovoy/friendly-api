@@ -22,8 +22,10 @@ type Tag interface {
 
 type Friendlist interface {
 	Create(userID uuid.UUID, friendlist models.Friendlist) (uuid.UUID, error)
-	GetAll(userID uuid.UUID) ([]models.FriendlistWithTags, error)
-	GetByID(userID, friendlistID uuid.UUID) (models.FriendlistWithTags, error)
+	GetAll(userID uuid.UUID) ([]models.Friendlist, error)
+	GetByID(userID, friendlistID uuid.UUID) (models.Friendlist, error)
+	GetAllWithTags(userID uuid.UUID) ([]models.FriendlistWithTags, error)
+	GetByIDWithTags(userID, friendlistID uuid.UUID) (models.FriendlistWithTags, error)
 	Update(userID, friendlistID uuid.UUID, friendlist models.Friendlist) error
 	AddTagToFriendlist(friendlistID, tagID uuid.UUID) error
 	DeleteTagFromFriendlist(friendlistID, tagID uuid.UUID) error

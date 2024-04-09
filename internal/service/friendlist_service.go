@@ -20,12 +20,20 @@ func (s *FriendlistService) Create(userID uuid.UUID, friendlist models.Friendlis
 	return s.repo.Create(userID, friendlist)
 }
 
-func (s *FriendlistService) GetAll(userID uuid.UUID) ([]models.FriendlistWithTags, error) {
+func (s *FriendlistService) GetAll(userID uuid.UUID) ([]models.Friendlist, error) {
 	return s.repo.GetAll(userID)
 }
 
-func (s *FriendlistService) GetByID(userID, friendlistID uuid.UUID) (models.FriendlistWithTags, error) {
+func (s *FriendlistService) GetByID(userID, friendlistID uuid.UUID) (models.Friendlist, error) {
 	return s.repo.GetByID(userID, friendlistID)
+}
+
+func (s *FriendlistService) GetAllWithTags(userID uuid.UUID) ([]models.FriendlistWithTags, error) {
+	return s.repo.GetAllWithTags(userID)
+}
+
+func (s *FriendlistService) GetByIDWithTags(userID, friendlistID uuid.UUID) (models.FriendlistWithTags, error) {
+	return s.repo.GetByIDWithTags(userID, friendlistID)
 }
 
 func (s *FriendlistService) Update(userID, friendlistID uuid.UUID, friendlist models.Friendlist) error {
