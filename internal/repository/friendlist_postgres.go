@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -161,17 +162,38 @@ func (r *FriendlistPostgres) DeleteByID(userID, friendlistID uuid.UUID) error {
 }
 
 func (r *FriendlistPostgres) AddTagToFriendlist(friendlistID, tagID uuid.UUID) error {
-	query := fmt.Sprintf("INSERT INTO \"%s\" (friendlist_id, tag_id) VALUES ($1, $2)", friendlistsTagsTable)
 
-	_, err := r.db.Exec(query, friendlistID, tagID)
+	var exists bool
+	queryCheck := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE friendlist_id = $1 AND tag_id = $2)", friendlistsTagsTable)
+
+	if err := r.db.Get(&exists, queryCheck, friendlistID, tagID); err != nil {
+		return err
+	}
+	if exists {
+		return errors.New("tag already exists in this friendlist")
+	}
+
+	queryAdd := fmt.Sprintf("INSERT INTO \"%s\" (friendlist_id, tag_id) VALUES ($1, $2)", friendlistsTagsTable)
+
+	_, err := r.db.Exec(queryAdd, friendlistID, tagID)
 
 	return err
 }
 
 func (r *FriendlistPostgres) AddFriendToFriendlist(friendlistID, friendID uuid.UUID) error {
-	query := fmt.Sprintf("INSERT INTO \"%s\" (friendlist_id, friend_id) VALUES ($1, $2)", friendlistsFriendsTable)
+	var exists bool
+	queryCheck := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE friendlist_id = $1 AND friend_id = $2)", friendlistsFriendsTable)
 
-	_, err := r.db.Exec(query, friendlistID, friendID)
+	if err := r.db.Get(&exists, queryCheck, friendlistID, friendID); err != nil {
+		return err
+	}
+	if exists {
+		return errors.New("friend already exists in friendlist")
+	}
+
+	queryAdd := fmt.Sprintf("INSERT INTO \"%s\" (friendlist_id, friend_id) VALUES ($1, $2)", friendlistsFriendsTable)
+
+	_, err := r.db.Exec(queryAdd, friendlistID, friendID)
 
 	return err
 }

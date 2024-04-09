@@ -43,6 +43,7 @@ func (s *FriendlistService) Update(userID, friendlistID uuid.UUID, friendlist mo
 func (s *FriendlistService) AddTagToFriendlist(friendlistID, tagID uuid.UUID) error {
 	return s.repo.AddTagToFriendlist(friendlistID, tagID)
 }
+
 func (s *FriendlistService) AddFriendToFriendlist(friendlistID, friendID uuid.UUID) error {
 	return s.repo.AddFriendToFriendlist(friendlistID, friendID)
 }
