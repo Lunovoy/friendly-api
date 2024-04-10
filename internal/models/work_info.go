@@ -13,3 +13,13 @@ type WorkInfo struct {
 	Nationality         string    `json:"nationality" db:"nationality"`
 	FriendID            uuid.UUID `json:"friend_id" db:"friend_id"`
 }
+
+type UpdateWorkInfoInput struct {
+	Country             *string `json:"country"`
+	City                *string `json:"city"`
+	Company             *string `json:"company"`
+	Position            *string `json:"position"`
+	Messenger           *string `json:"messenger"`
+	CommunicationMethod *string `json:"communication_method"`
+	Nationality         *string `json:"nationality"`
+}

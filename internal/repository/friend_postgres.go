@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/huandu/go-sqlbuilder"
 	"github.com/jmoiron/sqlx"
 	"github.com/lunovoy/friendly/internal/models"
 )
@@ -132,23 +133,66 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 	return friendWorkInfo, nil
 }
 
-func (r *FriendPostgres) Update(userID, FriendID uuid.UUID, friend models.FriendWorkInfo) error {
+func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.UpdateFriendWorkInfoInput) error {
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return err
 	}
 	defer tx.Rollback()
 
-	queryFriend := fmt.Sprintf("UPDATE %s SET first_name = $1, last_name = $2, dob = $3 WHERE id = $4 AND user_id = $5", friendTable)
+	if friend.Friend != nil {
+		builderFriend := sqlbuilder.NewUpdateBuilder()
+		builderFriend.Update(friendTable)
+		builderFriend.Where(
+			builderFriend.Equal("id", friendID),
+			builderFriend.Equal("user_id", userID),
+		)
 
-	_, err = r.db.Exec(queryFriend, friend.Friend.FirstName, friend.Friend.LastName, friend.Friend.DOB, FriendID, userID)
-	if err != nil {
-		return err
+		if friend.Friend.FirstName != nil {
+			builderFriend.Set("first_name", *friend.Friend.FirstName)
+		}
+		if friend.Friend.LastName != nil {
+			builderFriend.Set("last_name", *friend.Friend.LastName)
+		}
+		if friend.Friend.DOB != nil {
+			builderFriend.Set("dob", friend.Friend.DOB.Format("2006-01-02 15:04:05-07:00"))
+		}
+
+		queryFriend, args := builderFriend.Build()
+		_, err = r.db.Exec(queryFriend, args)
+		if err != nil {
+			return err
+		}
+	}
+
+	if friend.WorkInfo != nil {
+		builderWorkInfo := sqlbuilder.NewUpdateBuilder()
+		builderWorkInfo.Update(friendTable)
+		builderWorkInfo.Where(
+			builderWorkInfo.Equal("id", friendID),
+			builderWorkInfo.Equal("user_id", userID),
+		)
+
+		if friend.Friend.FirstName != nil {
+			builderWorkInfo.Set("first_name", *friend.Friend.FirstName)
+		}
+		if friend.Friend.LastName != nil {
+			builderWorkInfo.Set("last_name", *friend.Friend.LastName)
+		}
+		if friend.Friend.DOB != nil {
+			builderWorkInfo.Set("dob", friend.Friend.DOB.Format("2006-01-02 15:04:05-07:00"))
+		}
+
+		queryFriend, args := builderWorkInfo.Build()
+		_, err = r.db.Exec(queryFriend, args)
+		if err != nil {
+			return err
+		}
 	}
 
 	queryWorkInfo := fmt.Sprintf("UPDATE %s SET country = $1, city = $2, company = $3, position = $4, messenger = $5, communication_method = $6, nationality = $7 WHERE friend_id = $8", workInfoTable)
 
-	_, err = r.db.Exec(queryWorkInfo, friend.WorkInfo.Country, friend.WorkInfo.City, friend.WorkInfo.Company, friend.WorkInfo.Position, friend.WorkInfo.Messenger, friend.WorkInfo.CommunicationMethod, friend.WorkInfo.Nationality, FriendID)
+	_, err = r.db.Exec(queryWorkInfo, friend.WorkInfo.Country, friend.WorkInfo.City, friend.WorkInfo.Company, friend.WorkInfo.Position, friend.WorkInfo.Messenger, friend.WorkInfo.CommunicationMethod, friend.WorkInfo.Nationality, friendID)
 	if err != nil {
 		return err
 	}

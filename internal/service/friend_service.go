@@ -28,7 +28,7 @@ func (s *FriendService) GetByID(userID, friendID uuid.UUID) (models.FriendWorkIn
 	return s.repo.GetByID(userID, friendID)
 }
 
-func (s *FriendService) Update(userID, friendID uuid.UUID, friend models.FriendWorkInfo) error {
+func (s *FriendService) Update(userID, friendID uuid.UUID, friend models.UpdateFriendWorkInfoInput) error {
 	return s.repo.Update(userID, friendID, friend)
 }
 

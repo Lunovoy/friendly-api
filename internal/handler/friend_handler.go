@@ -87,7 +87,7 @@ func (h *Handler) updateFriend(c *gin.Context) {
 		return
 	}
 
-	var payload models.FriendWorkInfo
+	var payload models.UpdateFriendWorkInfoInput
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
