@@ -169,34 +169,33 @@ func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.Update
 
 	if friend.WorkInfo != nil {
 		builderWorkInfo := sqlbuilder.NewUpdateBuilder()
-		builderWorkInfo.Update(friendTable)
+		builderWorkInfo.Update(workInfoTable)
 		builderWorkInfo.Where(
-			builderWorkInfo.Equal("id", friendID),
-			builderWorkInfo.Equal("user_id", userID),
+			builderWorkInfo.Equal("friend_id", friendID),
 		)
 
-		if friend.Friend.FirstName != nil {
-			builderWorkInfo.Set("first_name", *friend.Friend.FirstName)
-		}
-		if friend.Friend.LastName != nil {
-			builderWorkInfo.Set("last_name", *friend.Friend.LastName)
-		}
-		if friend.Friend.DOB != nil {
-			builderWorkInfo.Set("dob", friend.Friend.DOB.Format("2006-01-02 15:04:05-07:00"))
+		fieldsToUpdateWorkInfo := map[string]*string{
+			"country":              friend.WorkInfo.Country,
+			"city":                 friend.WorkInfo.City,
+			"company":              friend.WorkInfo.Company,
+			"position":             friend.WorkInfo.Position,
+			"messenger":            friend.WorkInfo.Messenger,
+			"communication_method": friend.WorkInfo.CommunicationMethod,
+			"nationality":          friend.WorkInfo.Nationality,
+			"language":             friend.WorkInfo.Language,
 		}
 
-		queryFriend, args := builderWorkInfo.Build()
-		_, err = r.db.Exec(queryFriend, args)
+		for field, value := range fieldsToUpdateWorkInfo {
+			if value != nil {
+				builderWorkInfo.Set(field, *value)
+			}
+		}
+
+		queryWorkInfo, args := builderWorkInfo.Build()
+		_, err = r.db.Exec(queryWorkInfo, args)
 		if err != nil {
 			return err
 		}
-	}
-
-	queryWorkInfo := fmt.Sprintf("UPDATE %s SET country = $1, city = $2, company = $3, position = $4, messenger = $5, communication_method = $6, nationality = $7, language WHERE friend_id = $8", workInfoTable)
-
-	_, err = r.db.Exec(queryWorkInfo, friend.WorkInfo.Country, friend.WorkInfo.City, friend.WorkInfo.Company, friend.WorkInfo.Position, friend.WorkInfo.Messenger, friend.WorkInfo.CommunicationMethod, friend.WorkInfo.Nationality, friendID)
-	if err != nil {
-		return err
 	}
 
 	if err := tx.Commit(); err != nil {
