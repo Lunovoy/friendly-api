@@ -36,9 +36,9 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.Friend, workInfo
 	}
 
 	var workInfoID uuid.UUID
-	queryWorkInfo := fmt.Sprintf("INSERT INTO \"%s\" (country, city, company, position, messenger, communication_method, nationality, friend_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id", workInfoTable)
+	queryWorkInfo := fmt.Sprintf("INSERT INTO \"%s\" (country, city, company, position, messenger, communication_method, nationality, language, friend_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id", workInfoTable)
 
-	rowWorkInfo := tx.QueryRow(queryWorkInfo, workInfo.Country, workInfo.City, workInfo.Company, workInfo.Position, workInfo.Messenger, workInfo.CommunicationMethod, workInfo.Nationality, friendID)
+	rowWorkInfo := tx.QueryRow(queryWorkInfo, workInfo.Country, workInfo.City, workInfo.Company, workInfo.Position, workInfo.Messenger, workInfo.CommunicationMethod, workInfo.Nationality, workInfo.Language, friendID)
 	if err := rowWorkInfo.Scan(&workInfoID); err != nil {
 		return models.FriendIDWorkInfoID{}, err
 	}
@@ -67,7 +67,8 @@ func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, erro
 
 	var workInfos []models.WorkInfo
 	workInfoQuery := fmt.Sprintf(`SELECT w.id, w.country, w.city, w.company, w.position, 
-								w.messenger, w.communication_method, w.nationality, w.friend_id 
+								w.messenger, w.communication_method, w.nationality, 
+								w.language, w.friend_id 
 								FROM %s w
 								INNER JOIN %s f ON w.friend_id = f.id
     							WHERE f.user_id = $1`, workInfoTable, friendTable)
@@ -112,7 +113,8 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 
 	var workInfo models.WorkInfo
 	workInfoQuery := fmt.Sprintf(`SELECT w.id, w.country, w.city, w.company, w.position, 
-								w.messenger, w.communication_method, w.nationality, w.friend_id 
+								w.messenger, w.communication_method, w.nationality, 
+								w.language , w.friend_id
 								FROM %s w
 								INNER JOIN %s f ON w.friend_id = $1 
     							WHERE f.user_id = $2`, workInfoTable, friendTable)
@@ -190,7 +192,7 @@ func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.Update
 		}
 	}
 
-	queryWorkInfo := fmt.Sprintf("UPDATE %s SET country = $1, city = $2, company = $3, position = $4, messenger = $5, communication_method = $6, nationality = $7 WHERE friend_id = $8", workInfoTable)
+	queryWorkInfo := fmt.Sprintf("UPDATE %s SET country = $1, city = $2, company = $3, position = $4, messenger = $5, communication_method = $6, nationality = $7, language WHERE friend_id = $8", workInfoTable)
 
 	_, err = r.db.Exec(queryWorkInfo, friend.WorkInfo.Country, friend.WorkInfo.City, friend.WorkInfo.Company, friend.WorkInfo.Position, friend.WorkInfo.Messenger, friend.WorkInfo.CommunicationMethod, friend.WorkInfo.Nationality, friendID)
 	if err != nil {

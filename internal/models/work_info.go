@@ -11,6 +11,7 @@ type WorkInfo struct {
 	Messenger           string    `json:"messenger" db:"messenger"`
 	CommunicationMethod string    `json:"communication_method" db:"communication_method"`
 	Nationality         string    `json:"nationality" db:"nationality"`
+	Language            string    `json:"language" db:"language"`
 	FriendID            uuid.UUID `json:"friend_id" db:"friend_id"`
 }
 
@@ -22,4 +23,5 @@ type UpdateWorkInfoInput struct {
 	Messenger           *string `json:"messenger"`
 	CommunicationMethod *string `json:"communication_method"`
 	Nationality         *string `json:"nationality"`
+	Language            *string `json:"language"`
 }
