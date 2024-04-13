@@ -16,13 +16,13 @@ func (h *Handler) createFriend(c *gin.Context) {
 		return
 	}
 
-	var payload models.FriendWorkInfo
+	var payload models.UpdateFriendWorkInfoInput
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	friendIDWorkID, err := h.services.Friend.Create(userID, payload.Friend, payload.WorkInfo)
+	friendIDWorkID, err := h.services.Friend.Create(userID, payload)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

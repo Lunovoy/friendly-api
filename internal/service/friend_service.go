@@ -16,8 +16,8 @@ func NewFriendService(repo repository.Friend) *FriendService {
 	}
 }
 
-func (s *FriendService) Create(userID uuid.UUID, friend models.Friend, workInfo models.WorkInfo) (models.FriendIDWorkInfoID, error) {
-	return s.repo.Create(userID, friend, workInfo)
+func (s *FriendService) Create(userID uuid.UUID, friend models.UpdateFriendWorkInfoInput) (models.FriendIDWorkInfoID, error) {
+	return s.repo.Create(userID, friend)
 }
 
 func (s *FriendService) GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, error) {

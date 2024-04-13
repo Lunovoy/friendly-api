@@ -19,7 +19,7 @@ func NewFriendPostgres(db *sqlx.DB) *FriendPostgres {
 	}
 }
 
-func (r *FriendPostgres) Create(userID uuid.UUID, friend models.Friend, workInfo models.WorkInfo) (models.FriendIDWorkInfoID, error) {
+func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWorkInfoInput) (models.FriendIDWorkInfoID, error) {
 
 	tx, err := r.db.Beginx()
 	if err != nil {
@@ -27,20 +27,74 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.Friend, workInfo
 	}
 	defer tx.Rollback()
 
-	var friendID uuid.UUID
-	queryFriend := fmt.Sprintf("INSERT INTO \"%s\" (first_name, last_name , dob, user_id) VALUES ($1, $2, $3, $4) RETURNING id", friendTable)
+	fmt.Println(*friend.Friend.FirstName)
 
-	rowFriend := tx.QueryRow(queryFriend, friend.FirstName, friend.LastName, friend.DOB, userID)
+	builderFriend := sqlbuilder.NewInsertBuilder()
+	builderFriend.InsertInto(friendTable)
+
+	if friend.Friend.LastName != nil {
+		builderFriend.Cols("last_name").Values(*friend.Friend.LastName)
+	}
+	if friend.Friend.DOB != nil {
+		builderFriend.Cols("dob").Values(*friend.Friend.DOB)
+	}
+
+	builderFriend.Cols("first_name").Values(*friend.Friend.FirstName)
+	// builderFriend.Cols("user_id").Values(userID)
+
+	// queryFriend := builderFriend.String() + " RETURNING id;"
+	queryFriend, args := builderFriend.Build()
+	fmt.Println(queryFriend, args)
+
+	var friendID uuid.UUID
+
+	rowFriend := tx.QueryRow(queryFriend)
 	if err := rowFriend.Scan(&friendID); err != nil {
 		return models.FriendIDWorkInfoID{}, err
 	}
 
 	var workInfoID uuid.UUID
-	queryWorkInfo := fmt.Sprintf("INSERT INTO \"%s\" (country, city, company, position, messenger, communication_method, nationality, language, friend_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id", workInfoTable)
+	builderWorkInfo := sqlbuilder.NewInsertBuilder()
+	builderWorkInfo.InsertInto(workInfoTable)
 
-	rowWorkInfo := tx.QueryRow(queryWorkInfo, workInfo.Country, workInfo.City, workInfo.Company, workInfo.Position, workInfo.Messenger, workInfo.CommunicationMethod, workInfo.Nationality, workInfo.Language, friendID)
-	if err := rowWorkInfo.Scan(&workInfoID); err != nil {
-		return models.FriendIDWorkInfoID{}, err
+	if friend.WorkInfo != nil {
+
+		fieldsToUpdateWorkInfo := map[string]*string{
+			"country":              friend.WorkInfo.Country,
+			"city":                 friend.WorkInfo.City,
+			"company":              friend.WorkInfo.Company,
+			"position":             friend.WorkInfo.Position,
+			"messenger":            friend.WorkInfo.Messenger,
+			"communication_method": friend.WorkInfo.CommunicationMethod,
+			"nationality":          friend.WorkInfo.Nationality,
+			"language":             friend.WorkInfo.Language,
+		}
+
+		for field, value := range fieldsToUpdateWorkInfo {
+			if value != nil {
+				builderWorkInfo.Cols(field).Values(*value)
+			}
+		}
+
+		builderWorkInfo.Cols("friend_id").Values(friendID)
+
+		queryWorkInfo := builderWorkInfo.String() + " RETURNING id;"
+
+		rowWorkInfo := tx.QueryRow(queryWorkInfo)
+
+		if err := rowWorkInfo.Scan(&workInfoID); err != nil {
+			return models.FriendIDWorkInfoID{}, err
+		}
+	} else {
+
+		builderWorkInfo.Cols("friend_id").Values(friendID)
+
+		queryWorkInfo := builderWorkInfo.String() + " RETURNING id;"
+		rowWorkInfo := tx.QueryRow(queryWorkInfo)
+
+		if err := rowWorkInfo.Scan(&workInfoID); err != nil {
+			return models.FriendIDWorkInfoID{}, err
+		}
 	}
 
 	if err := tx.Commit(); err != nil {

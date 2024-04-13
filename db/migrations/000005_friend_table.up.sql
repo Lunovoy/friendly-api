@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS "friend" (
     "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     "first_name" varchar(50) not null,
     "last_name" varchar(50) DEFAULT '',
-    "dob" timestamp with time zone DEFAULT '1970-01-01 00:00:00+00', 
+    "dob" timestamp with time zone, 
     "user_id" UUID not null,
     FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
 );
