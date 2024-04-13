@@ -27,31 +27,36 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWork
 	}
 	defer tx.Rollback()
 
-	fmt.Println(*friend.Friend.FirstName)
-
+	friendFields := []string{"first_name", "user_id"}
 	builderFriend := sqlbuilder.NewInsertBuilder()
 	builderFriend.InsertInto(friendTable)
+	builderFriend.Values(*friend.Friend.FirstName, userID)
 
 	if friend.Friend.LastName != nil {
-		builderFriend.Cols("last_name").Values(*friend.Friend.LastName)
+		friendFields = append(friendFields, "last_name")
+		builderFriend.Values(*friend.Friend.LastName)
 	}
 	if friend.Friend.DOB != nil {
-		builderFriend.Cols("dob").Values(*friend.Friend.DOB)
+		friendFields = append(friendFields, "dob_name")
+		builderFriend.Values(*friend.Friend.DOB)
 	}
 
-	builderFriend.Cols("first_name").Values(*friend.Friend.FirstName)
-	// builderFriend.Cols("user_id").Values(userID)
+	builderFriend.Cols(friendFields...)
 
-	// queryFriend := builderFriend.String() + " RETURNING id;"
-	queryFriend, args := builderFriend.Build()
+	_, args := builderFriend.Build()
+	// queryFriend += " RETURNING id;"
+	queryFriend := builderFriend.String() + " RETURNING id"
+	// queryFriend, args := builderFriend.Build()
 	fmt.Println(queryFriend, args)
 
 	var friendID uuid.UUID
 
-	rowFriend := tx.QueryRow(queryFriend)
+	rowFriend := tx.QueryRow(queryFriend, args...)
 	if err := rowFriend.Scan(&friendID); err != nil {
 		return models.FriendIDWorkInfoID{}, err
 	}
+
+	fmt.Println("Friend:", friendID)
 
 	var workInfoID uuid.UUID
 	builderWorkInfo := sqlbuilder.NewInsertBuilder()
