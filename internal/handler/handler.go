@@ -5,6 +5,12 @@ import (
 	"github.com/lunovoy/friendly/internal/service"
 )
 
+const (
+	maxFileSize    = 5 << 20 // 5MB
+	uploadDir      = "./images/"
+	imageExtension = ".jpg"
+)
+
 type Handler struct {
 	services *service.Service
 }
@@ -57,6 +63,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			friend.GET("/:id", h.getFriendByID)
 			friend.PUT("/:id", h.updateFriend)
 			friend.DELETE("/:id", h.deleteFriend)
+		}
+		image := api.Group("/image")
+		{
+			image.POST("/", h.uploadImage)
+			image.GET("/:id/:res", h.getImage)
+			image.DELETE("/:id", h.deleteImage)
 		}
 	}
 	return router

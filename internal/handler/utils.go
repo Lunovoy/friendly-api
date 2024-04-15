@@ -2,7 +2,9 @@ package handler
 
 import (
 	"errors"
+	"mime/multipart"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -22,4 +24,16 @@ func getUserIDFromCtx(c *gin.Context) (uuid.UUID, error) {
 	}
 
 	return convertedID, nil
+}
+func saveFile(c *gin.Context, file *multipart.FileHeader, filePath string) error {
+
+	err := c.SaveUploadedFile(file, filePath)
+	return err
+}
+func deleteFile(filePath string) error {
+
+	err := os.Remove(filePath)
+
+	return err
+
 }

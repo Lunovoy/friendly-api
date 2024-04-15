@@ -38,8 +38,12 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWork
 		friendValues = append(friendValues, *friend.Friend.LastName)
 	}
 	if friend.Friend.DOB != nil {
-		friendFields = append(friendFields, "dob_name")
+		friendFields = append(friendFields, "dob")
 		friendValues = append(friendValues, *friend.Friend.DOB)
+	}
+	if friend.Friend.ImageID != nil {
+		friendFields = append(friendFields, "image_id")
+		friendValues = append(friendValues, *friend.Friend.ImageID)
 	}
 
 	builderFriend.Cols(friendFields...).Values(friendValues...)
@@ -120,7 +124,7 @@ func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, erro
 	defer tx.Rollback()
 
 	var friends []models.Friend
-	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, dob, user_id FROM %s WHERE user_id = $1", friendTable)
+	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, dob, image_id, user_id FROM %s WHERE user_id = $1", friendTable)
 	err = tx.Select(&friends, friendQuery, userID)
 	if err != nil {
 		return nil, err
@@ -166,7 +170,7 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 	defer tx.Rollback()
 
 	var friend models.Friend
-	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, dob, user_id FROM %s WHERE id = $1 AND user_id = $2", friendTable)
+	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, dob, image_id, user_id FROM %s WHERE id = $1 AND user_id = $2", friendTable)
 	err = tx.Get(&friend, friendQuery, friendID, userID)
 	if err != nil {
 		return models.FriendWorkInfo{}, err
@@ -221,6 +225,9 @@ func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.Update
 		}
 		if friend.Friend.DOB != nil {
 			friendFieldsWithValues = append(friendFieldsWithValues, builderFriend.Assign("dob", *friend.Friend.DOB))
+		}
+		if friend.Friend.ImageID != nil {
+			friendFieldsWithValues = append(friendFieldsWithValues, builderFriend.Assign("image_id", *friend.Friend.ImageID))
 		}
 
 		builderFriend.Set(friendFieldsWithValues...)

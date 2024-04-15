@@ -17,7 +17,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+const uploadDir = "./images/"
+
 func main() {
+	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
+		os.Mkdir(uploadDir, os.ModePerm)
+	}
+
 	logrus.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: false,
 	})

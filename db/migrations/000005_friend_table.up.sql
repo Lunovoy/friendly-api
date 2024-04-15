@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS "friend" (
     "first_name" varchar(50) not null,
     "last_name" varchar(50) DEFAULT '',
     "dob" timestamp with time zone, 
+    "image_id" UUID,
     "user_id" UUID not null,
     FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
 );

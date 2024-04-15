@@ -93,16 +93,28 @@ func (h *Handler) updateFriend(c *gin.Context) {
 		return
 	}
 
-	_, err = h.services.Friend.GetByID(userID, friendID)
+	friend, err := h.services.Friend.GetByID(userID, friendID)
 	if err != nil {
 		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("friendlist not found: %s", err.Error()))
 		return
 	}
+	oldImageID := friend.Friend.ImageID
 
 	err = h.services.Friend.Update(userID, friendID, payload)
 	if err != nil {
+		if payload.Friend.ImageID != nil {
+			deleteFile(fmt.Sprintf("%s%s%s", uploadDir, payload.Friend.ImageID, imageExtension))
+		}
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
+	}
+
+	if oldImageID != uuid.Nil {
+		err := deleteFile(fmt.Sprintf("%s%s%s", uploadDir, oldImageID, imageExtension))
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, statusResponse{
@@ -123,16 +135,26 @@ func (h *Handler) deleteFriend(c *gin.Context) {
 		return
 	}
 
-	_, err = h.services.Friend.GetByID(userID, friendID)
+	friend, err := h.services.Friend.GetByID(userID, friendID)
 	if err != nil {
 		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("friend not found or already deleted: %s", err.Error()))
 		return
 	}
 
+	oldImageID := friend.Friend.ImageID
+
 	err = h.services.Friend.DeleteByID(userID, friendID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
+	}
+
+	if oldImageID != uuid.Nil {
+		err := deleteFile(fmt.Sprintf("%s%s%s", uploadDir, oldImageID, imageExtension))
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, statusResponse{
