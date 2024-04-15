@@ -28,26 +28,24 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWork
 	defer tx.Rollback()
 
 	friendFields := []string{"first_name", "user_id"}
+	friendValues := []any{*friend.Friend.FirstName, userID}
 	builderFriend := sqlbuilder.NewInsertBuilder()
+	builderFriend.SetFlavor(sqlbuilder.PostgreSQL)
 	builderFriend.InsertInto(friendTable)
-	builderFriend.Values(*friend.Friend.FirstName, userID)
 
 	if friend.Friend.LastName != nil {
 		friendFields = append(friendFields, "last_name")
-		builderFriend.Values(*friend.Friend.LastName)
+		friendValues = append(friendValues, *friend.Friend.LastName)
 	}
 	if friend.Friend.DOB != nil {
 		friendFields = append(friendFields, "dob_name")
-		builderFriend.Values(*friend.Friend.DOB)
+		friendValues = append(friendValues, *friend.Friend.DOB)
 	}
 
-	builderFriend.Cols(friendFields...)
+	builderFriend.Cols(friendFields...).Values(friendValues...)
 
-	_, args := builderFriend.Build()
-	// queryFriend += " RETURNING id;"
-	queryFriend := builderFriend.String() + " RETURNING id"
-	// queryFriend, args := builderFriend.Build()
-	fmt.Println(queryFriend, args)
+	queryFriend, args := builderFriend.Build()
+	queryFriend += " RETURNING id;"
 
 	var friendID uuid.UUID
 
@@ -56,13 +54,15 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWork
 		return models.FriendIDWorkInfoID{}, err
 	}
 
-	fmt.Println("Friend:", friendID)
-
 	var workInfoID uuid.UUID
 	builderWorkInfo := sqlbuilder.NewInsertBuilder()
 	builderWorkInfo.InsertInto(workInfoTable)
+	builderWorkInfo.SetFlavor(sqlbuilder.PostgreSQL)
 
 	if friend.WorkInfo != nil {
+
+		workFields := []string{"friend_id"}
+		workValues := []any{friendID}
 
 		fieldsToUpdateWorkInfo := map[string]*string{
 			"country":              friend.WorkInfo.Country,
@@ -77,15 +77,16 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWork
 
 		for field, value := range fieldsToUpdateWorkInfo {
 			if value != nil {
-				builderWorkInfo.Cols(field).Values(*value)
+				workFields = append(workFields, field)
+				workValues = append(workValues, value)
 			}
 		}
+		builderWorkInfo.Cols(workFields...).Values(workValues...)
 
-		builderWorkInfo.Cols("friend_id").Values(friendID)
+		queryWorkInfo, args := builderWorkInfo.Build()
+		queryWorkInfo += " RETURNING id;"
 
-		queryWorkInfo := builderWorkInfo.String() + " RETURNING id;"
-
-		rowWorkInfo := tx.QueryRow(queryWorkInfo)
+		rowWorkInfo := tx.QueryRow(queryWorkInfo, args...)
 
 		if err := rowWorkInfo.Scan(&workInfoID); err != nil {
 			return models.FriendIDWorkInfoID{}, err
@@ -94,8 +95,9 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWork
 
 		builderWorkInfo.Cols("friend_id").Values(friendID)
 
-		queryWorkInfo := builderWorkInfo.String() + " RETURNING id;"
-		rowWorkInfo := tx.QueryRow(queryWorkInfo)
+		queryWorkInfo, args := builderWorkInfo.Build()
+		queryWorkInfo += " RETURNING id;"
+		rowWorkInfo := tx.QueryRow(queryWorkInfo, args...)
 
 		if err := rowWorkInfo.Scan(&workInfoID); err != nil {
 			return models.FriendIDWorkInfoID{}, err
@@ -202,7 +204,9 @@ func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.Update
 	defer tx.Rollback()
 
 	if friend.Friend != nil {
+		friendFieldsWithValues := []string{}
 		builderFriend := sqlbuilder.NewUpdateBuilder()
+		builderFriend.SetFlavor(sqlbuilder.PostgreSQL)
 		builderFriend.Update(friendTable)
 		builderFriend.Where(
 			builderFriend.Equal("id", friendID),
@@ -210,24 +214,28 @@ func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.Update
 		)
 
 		if friend.Friend.FirstName != nil {
-			builderFriend.Set("first_name", *friend.Friend.FirstName)
+			friendFieldsWithValues = append(friendFieldsWithValues, builderFriend.Assign("first_name", *friend.Friend.FirstName))
 		}
 		if friend.Friend.LastName != nil {
-			builderFriend.Set("last_name", *friend.Friend.LastName)
+			friendFieldsWithValues = append(friendFieldsWithValues, builderFriend.Assign("last_name", *friend.Friend.LastName))
 		}
 		if friend.Friend.DOB != nil {
-			builderFriend.Set("dob", friend.Friend.DOB.Format("2006-01-02 15:04:05-07:00"))
+			friendFieldsWithValues = append(friendFieldsWithValues, builderFriend.Assign("dob", *friend.Friend.DOB))
 		}
 
+		builderFriend.Set(friendFieldsWithValues...)
+
 		queryFriend, args := builderFriend.Build()
-		_, err = r.db.Exec(queryFriend, args)
+		_, err = r.db.Exec(queryFriend, args...)
 		if err != nil {
 			return err
 		}
 	}
 
 	if friend.WorkInfo != nil {
+		workFieldsWithValues := []string{}
 		builderWorkInfo := sqlbuilder.NewUpdateBuilder()
+		builderWorkInfo.SetFlavor(sqlbuilder.PostgreSQL)
 		builderWorkInfo.Update(workInfoTable)
 		builderWorkInfo.Where(
 			builderWorkInfo.Equal("friend_id", friendID),
@@ -246,12 +254,13 @@ func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.Update
 
 		for field, value := range fieldsToUpdateWorkInfo {
 			if value != nil {
-				builderWorkInfo.Set(field, *value)
+				workFieldsWithValues = append(workFieldsWithValues, builderWorkInfo.Assign(field, *value))
 			}
 		}
+		builderWorkInfo.Set(workFieldsWithValues...)
 
 		queryWorkInfo, args := builderWorkInfo.Build()
-		_, err = r.db.Exec(queryWorkInfo, args)
+		_, err = r.db.Exec(queryWorkInfo, args...)
 		if err != nil {
 			return err
 		}
