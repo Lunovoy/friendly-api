@@ -19,6 +19,9 @@ func NewFriendlistPostgres(db *sqlx.DB) *FriendlistPostgres {
 	}
 }
 
+// TODO: add dynamic queries in Create and Update;
+// add proper image deletion in friendlists
+
 func (r *FriendlistPostgres) Create(userID uuid.UUID, friendlist models.Friendlist) (uuid.UUID, error) {
 
 	tx, err := r.db.Beginx()
@@ -28,9 +31,9 @@ func (r *FriendlistPostgres) Create(userID uuid.UUID, friendlist models.Friendli
 	defer tx.Rollback()
 
 	var friendlistID uuid.UUID
-	query := fmt.Sprintf("INSERT INTO \"%s\" (title, description, user_id) VALUES ($1, $2, $3) RETURNING id", friendlistTable)
+	query := fmt.Sprintf("INSERT INTO \"%s\" (title, description, image_id, user_id) VALUES ($1, $2, $3, $4) RETURNING id", friendlistTable)
 
-	row := tx.QueryRow(query, friendlist.Title, friendlist.Description, userID)
+	row := tx.QueryRow(query, friendlist.Title, friendlist.Description, friendlist.ImageID, userID)
 	if err := row.Scan(&friendlistID); err != nil {
 		return uuid.Nil, err
 	}
@@ -43,7 +46,7 @@ func (r *FriendlistPostgres) Create(userID uuid.UUID, friendlist models.Friendli
 func (r *FriendlistPostgres) GetAll(userID uuid.UUID) ([]models.Friendlist, error) {
 	var friendlists []models.Friendlist
 
-	query := fmt.Sprintf("SELECT id, title, description, user_id FROM %s where user_id = $1", friendlistTable)
+	query := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s where user_id = $1", friendlistTable)
 
 	err := r.db.Select(&friendlists, query, userID)
 
@@ -54,7 +57,7 @@ func (r *FriendlistPostgres) GetAll(userID uuid.UUID) ([]models.Friendlist, erro
 func (r *FriendlistPostgres) GetByID(userID, friendlistID uuid.UUID) (models.Friendlist, error) {
 	var friendlist models.Friendlist
 
-	query := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
+	query := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
 
 	err := r.db.Get(&friendlist, query, friendlistID, userID)
 
@@ -70,7 +73,7 @@ func (r *FriendlistPostgres) GetAllWithTags(userID uuid.UUID) ([]models.Friendli
 
 	var friendlists []models.Friendlist
 
-	queryFriendlists := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE user_id = $1", friendlistTable)
+	queryFriendlists := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE user_id = $1", friendlistTable)
 
 	if err := tx.Select(&friendlists, queryFriendlists, userID); err != nil {
 		return nil, err
@@ -114,7 +117,7 @@ func (r *FriendlistPostgres) GetByIDWithTags(userID, friendlistID uuid.UUID) (mo
 
 	var friendlist models.Friendlist
 
-	queryFriendlist := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
+	queryFriendlist := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
 
 	if err := tx.Get(&friendlist, queryFriendlist, friendlistID, userID); err != nil {
 		return models.FriendlistWithTags{}, err
@@ -151,7 +154,7 @@ func (r *FriendlistPostgres) GetAllWithFriends(userID uuid.UUID) ([]models.Frien
 
 	var friendlists []models.Friendlist
 
-	queryFriendlists := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE user_id = $1", friendlistTable)
+	queryFriendlists := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE user_id = $1", friendlistTable)
 
 	if err := tx.Select(&friendlists, queryFriendlists, userID); err != nil {
 		return nil, err
@@ -195,7 +198,7 @@ func (r *FriendlistPostgres) GetByIDWithFriends(userID, friendlistID uuid.UUID) 
 
 	var friendlist models.Friendlist
 
-	queryFriendlist := fmt.Sprintf("SELECT id, title, description, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
+	queryFriendlist := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
 
 	if err := tx.Get(&friendlist, queryFriendlist, friendlistID, userID); err != nil {
 		return models.FriendlistWithFriends{}, err
