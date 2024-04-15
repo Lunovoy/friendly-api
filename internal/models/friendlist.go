@@ -7,7 +7,8 @@ import (
 type Friendlist struct {
 	ID          uuid.UUID `json:"id,omitempty" db:"id"`
 	Title       string    `json:"title" db:"title" binding:"required"`
-	Description string    `json:"description"`
+	Description string    `json:"description" db:"description"`
+	ImageID     uuid.UUID `json:"image_id" db:"image_id"`
 	UserID      uuid.UUID `json:"user_id" db:"user_id"`
 }
 
