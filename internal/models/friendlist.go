@@ -28,13 +28,10 @@ type FriendlistWithTags struct {
 	Friendlist Friendlist `json:"friendlist"`
 	Tags       []Tag      `json:"tags"`
 }
+
 type FriendlistWithFriends struct {
 	Friendlist Friendlist `json:"friendlist"`
 	Friends    []Friend   `json:"friends"`
-}
-
-type AdditionTagToFriendlist struct {
-	TagID uuid.UUID `json:"tag_id" db:"tag_id" binding:"required"`
 }
 
 type AdditionFriendToFriendlist struct {

@@ -13,6 +13,7 @@ const (
 	friendlistsTagsTable             = "friendlists_tags"
 	friendlistsFriendsTable          = "friendlists_friends"
 	friendTable                      = "friend"
+	friendsTagsTable                 = "friends_tags"
 	workInfoTable                    = "work_info"
 	additionalInfoFieldTable         = "additional_info_field"
 	friendsAdditionalInfoFieldsTable = "friends_additional_info_fields"

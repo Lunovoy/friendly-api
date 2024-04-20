@@ -84,7 +84,7 @@ func (r *FriendlistPostgres) GetAllWithTags(userID uuid.UUID) ([]models.Friendli
 							INNER JOIN %s ft ON ft.tag_id = t.id 
 							WHERE ft.friendlist_id = $1`, tagTable, friendlistsTagsTable)
 
-	stmt, err := tx.Preparex(queryTags)
+	tagStmt, err := tx.Preparex(queryTags)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func (r *FriendlistPostgres) GetAllWithTags(userID uuid.UUID) ([]models.Friendli
 	var tags []models.Tag
 	for _, friendlist := range friendlists {
 
-		if err := stmt.Select(&tags, friendlist.ID); err != nil {
+		if err := tagStmt.Select(&tags, friendlist.ID); err != nil {
 			return nil, err
 		}
 		friendlistsWithTags = append(friendlistsWithTags, models.FriendlistWithTags{

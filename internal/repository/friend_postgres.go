@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -115,7 +116,7 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWork
 	return models.FriendIDWorkInfoID{FriendID: friendID, WorkInfoID: workInfoID}, nil
 }
 
-func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, error) {
+func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfoTags, error) {
 
 	tx, err := r.db.Beginx()
 	if err != nil {
@@ -142,16 +143,33 @@ func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, erro
 		return nil, err
 	}
 
-	var friendWorkInfos []models.FriendWorkInfo
+	queryTags := fmt.Sprintf(`SELECT t.id, t.title, t.user_id 
+							FROM %s t
+							INNER JOIN %s ft ON ft.tag_id = t.id 
+							WHERE ft.friend_id = $1`, tagTable, friendsTagsTable)
+
+	tagStmt, err := tx.Preparex(queryTags)
+	if err != nil {
+		return nil, err
+	}
+
+	var tags []models.Tag
+
+	var friendWorkInfos []models.FriendWorkInfoTags
 	for _, friend := range friends {
+		if err := tagStmt.Select(&tags, friend.ID); err != nil {
+			return nil, err
+		}
 		for _, workInfo := range workInfos {
 			if friend.ID == workInfo.FriendID {
-				friendWorkInfos = append(friendWorkInfos, models.FriendWorkInfo{
+				friendWorkInfos = append(friendWorkInfos, models.FriendWorkInfoTags{
 					Friend:   friend,
 					WorkInfo: workInfo,
+					Tags:     tags,
 				})
 			}
 		}
+		tags = nil
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -161,11 +179,11 @@ func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, erro
 	return friendWorkInfos, nil
 }
 
-func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkInfo, error) {
+func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkInfoTags, error) {
 
 	tx, err := r.db.Beginx()
 	if err != nil {
-		return models.FriendWorkInfo{}, err
+		return models.FriendWorkInfoTags{}, err
 	}
 	defer tx.Rollback()
 
@@ -173,7 +191,7 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, dob, image_id, user_id FROM %s WHERE id = $1 AND user_id = $2", friendTable)
 	err = tx.Get(&friend, friendQuery, friendID, userID)
 	if err != nil {
-		return models.FriendWorkInfo{}, err
+		return models.FriendWorkInfoTags{}, err
 	}
 
 	var workInfo models.WorkInfo
@@ -185,16 +203,27 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
     							WHERE f.user_id = $2`, workInfoTable, friendTable)
 	err = tx.Get(&workInfo, workInfoQuery, friendID, userID)
 	if err != nil {
-		return models.FriendWorkInfo{}, err
+		return models.FriendWorkInfoTags{}, err
 	}
 
-	friendWorkInfo := models.FriendWorkInfo{
+	queryTags := fmt.Sprintf(`SELECT t.id, t.title, t.user_id 
+	FROM %s t
+	INNER JOIN %s ft ON ft.tag_id = t.id 
+	WHERE ft.friend_id = $1`, tagTable, friendsTagsTable)
+
+	var tags []models.Tag
+	if err := tx.Select(&tags, queryTags, friend.ID); err != nil {
+		return models.FriendWorkInfoTags{}, err
+	}
+
+	friendWorkInfo := models.FriendWorkInfoTags{
 		Friend:   friend,
 		WorkInfo: workInfo,
+		Tags:     tags,
 	}
 
 	if err := tx.Commit(); err != nil {
-		return models.FriendWorkInfo{}, err
+		return models.FriendWorkInfoTags{}, err
 	}
 
 	return friendWorkInfo, nil
@@ -284,6 +313,46 @@ func (r *FriendPostgres) DeleteByID(userID, FriendID uuid.UUID) error {
 	query := fmt.Sprintf("DELETE FROM %s where id=$1 AND user_id=$2", friendTable)
 
 	_, err := r.db.Exec(query, FriendID, userID)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (r *FriendPostgres) AddTagToFriend(friendID, tagID uuid.UUID) error {
+
+	var exists bool
+	queryCheck := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE friend_id = $1 AND tag_id = $2)", friendsTagsTable)
+
+	if err := r.db.Get(&exists, queryCheck, friendID, tagID); err != nil {
+		return err
+	}
+	if exists {
+		return errors.New("tag already exists for this friend")
+	}
+
+	queryAdd := fmt.Sprintf("INSERT INTO \"%s\" (friend_id, tag_id) VALUES ($1, $2)", friendsTagsTable)
+
+	_, err := r.db.Exec(queryAdd, friendID, tagID)
+
+	return err
+}
+
+func (r *FriendPostgres) DeleteTagFromFriend(friendID, tagID uuid.UUID) error {
+	var exists bool
+	queryCheck := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE friend_id = $1 AND tag_id = $2)", friendsTagsTable)
+
+	if err := r.db.Get(&exists, queryCheck, friendID, tagID); err != nil {
+		return err
+	}
+	if !exists {
+		return errors.New("tag already removed from friend")
+	}
+
+	query := fmt.Sprintf("DELETE FROM %s where friend_id=$1 AND tag_id=$2", friendsTagsTable)
+
+	_, err := r.db.Exec(query, friendID, tagID)
 	if err != nil {
 		return err
 	}

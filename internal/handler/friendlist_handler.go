@@ -242,7 +242,7 @@ func (h *Handler) addTagToFriendlist(c *gin.Context) {
 		return
 	}
 
-	var payload models.AdditionTagToFriendlist
+	var payload models.AdditionTag
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return

@@ -22,10 +22,12 @@ type UpdateFriendInput struct {
 	ImageID   *uuid.UUID `json:"image_id"`
 }
 
-type FriendWorkInfo struct {
-	Friend   Friend   `json:"friend" binding:"required"`
-	WorkInfo WorkInfo `json:"work_info" binding:"required"`
+type FriendWorkInfoTags struct {
+	Friend   Friend   `json:"friend"`
+	WorkInfo WorkInfo `json:"work_info"`
+	Tags     []Tag    `json:"tags,omitempty"`
 }
+
 type UpdateFriendWorkInfoInput struct {
 	Friend   *UpdateFriendInput   `json:"friend"`
 	WorkInfo *UpdateWorkInfoInput `json:"work_info"`
@@ -34,4 +36,15 @@ type UpdateFriendWorkInfoInput struct {
 type FriendIDWorkInfoID struct {
 	FriendID   uuid.UUID `json:"friend_id"`
 	WorkInfoID uuid.UUID `json:"work_info_id"`
+}
+
+type FriendsTags struct {
+	ID       uuid.UUID `json:"id,omitempty" db:"id"`
+	FriendID uuid.UUID `json:"friend_id" db:"friend_id"`
+	TagID    uuid.UUID `json:"tag_id" db:"tag_id"`
+}
+
+type FriendWithTags struct {
+	Friendlist Friendlist `json:"friendlist"`
+	Tags       []Tag      `json:"tags"`
 }

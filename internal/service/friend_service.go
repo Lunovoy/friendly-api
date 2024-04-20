@@ -20,11 +20,11 @@ func (s *FriendService) Create(userID uuid.UUID, friend models.UpdateFriendWorkI
 	return s.repo.Create(userID, friend)
 }
 
-func (s *FriendService) GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, error) {
+func (s *FriendService) GetAll(userID uuid.UUID) ([]models.FriendWorkInfoTags, error) {
 	return s.repo.GetAll(userID)
 }
 
-func (s *FriendService) GetByID(userID, friendID uuid.UUID) (models.FriendWorkInfo, error) {
+func (s *FriendService) GetByID(userID, friendID uuid.UUID) (models.FriendWorkInfoTags, error) {
 	return s.repo.GetByID(userID, friendID)
 }
 
@@ -34,4 +34,12 @@ func (s *FriendService) Update(userID, friendID uuid.UUID, friend models.UpdateF
 
 func (s *FriendService) DeleteByID(userID, friendID uuid.UUID) error {
 	return s.repo.DeleteByID(userID, friendID)
+}
+
+func (s *FriendService) AddTagToFriend(friendID, tagID uuid.UUID) error {
+	return s.repo.AddTagToFriend(friendID, tagID)
+}
+
+func (s *FriendService) DeleteTagFromFriend(friendID, tagID uuid.UUID) error {
+	return s.repo.DeleteTagFromFriend(friendID, tagID)
 }

@@ -38,10 +38,12 @@ type Friendlist interface {
 
 type Friend interface {
 	Create(userID uuid.UUID, friend models.UpdateFriendWorkInfoInput) (models.FriendIDWorkInfoID, error)
-	GetAll(userID uuid.UUID) ([]models.FriendWorkInfo, error)
-	GetByID(userID, friendID uuid.UUID) (models.FriendWorkInfo, error)
+	GetAll(userID uuid.UUID) ([]models.FriendWorkInfoTags, error)
+	GetByID(userID, friendID uuid.UUID) (models.FriendWorkInfoTags, error)
 	Update(userID, friendID uuid.UUID, friend models.UpdateFriendWorkInfoInput) error
 	DeleteByID(userID, friendID uuid.UUID) error
+	AddTagToFriend(friendID, tagID uuid.UUID) error
+	DeleteTagFromFriend(friendID, tagID uuid.UUID) error
 }
 
 type AdditionalInfoField interface {

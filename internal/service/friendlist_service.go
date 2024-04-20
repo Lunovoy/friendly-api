@@ -59,6 +59,7 @@ func (s *FriendlistService) AddFriendToFriendlist(friendlistID, friendID uuid.UU
 func (s *FriendlistService) DeleteTagFromFriendlist(friendlistID, tagID uuid.UUID) error {
 	return s.repo.DeleteTagFromFriendlist(friendlistID, tagID)
 }
+
 func (s *FriendlistService) DeleteFriendFromFriendlist(friendlistID, friendID uuid.UUID) error {
 	return s.repo.DeleteFriendFromFriendlist(friendlistID, friendID)
 }
