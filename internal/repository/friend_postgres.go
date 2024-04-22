@@ -73,6 +73,7 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWork
 			"country":              friend.WorkInfo.Country,
 			"city":                 friend.WorkInfo.City,
 			"company":              friend.WorkInfo.Company,
+			"profession":           friend.WorkInfo.Profession,
 			"position":             friend.WorkInfo.Position,
 			"messenger":            friend.WorkInfo.Messenger,
 			"communication_method": friend.WorkInfo.CommunicationMethod,
@@ -83,9 +84,14 @@ func (r *FriendPostgres) Create(userID uuid.UUID, friend models.UpdateFriendWork
 		for field, value := range fieldsToUpdateWorkInfo {
 			if value != nil {
 				workFields = append(workFields, field)
-				workValues = append(workValues, value)
+				workValues = append(workValues, *value)
 			}
 		}
+		if friend.WorkInfo.Resident != nil {
+			workFields = append(workFields, "resident")
+			workValues = append(workValues, *friend.WorkInfo.Resident)
+		}
+
 		builderWorkInfo.Cols(workFields...).Values(workValues...)
 
 		queryWorkInfo, args := builderWorkInfo.Build()
@@ -274,7 +280,7 @@ func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.Update
 			builderWorkInfo.Equal("friend_id", friendID),
 		)
 
-		fieldsToUpdateWorkInfo := map[string]any{
+		fieldsToUpdateWorkInfo := map[string]*string{
 			"country":              friend.WorkInfo.Country,
 			"city":                 friend.WorkInfo.City,
 			"company":              friend.WorkInfo.Company,
@@ -283,14 +289,16 @@ func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.Update
 			"messenger":            friend.WorkInfo.Messenger,
 			"communication_method": friend.WorkInfo.CommunicationMethod,
 			"nationality":          friend.WorkInfo.Nationality,
-			"resident":             friend.WorkInfo.Resident,
 			"language":             friend.WorkInfo.Language,
 		}
 
 		for field, value := range fieldsToUpdateWorkInfo {
 			if value != nil {
-				workFieldsWithValues = append(workFieldsWithValues, builderWorkInfo.Assign(field, value))
+				workFieldsWithValues = append(workFieldsWithValues, builderWorkInfo.Assign(field, *value))
 			}
+		}
+		if friend.WorkInfo.Resident != nil {
+			workFieldsWithValues = append(workFieldsWithValues, builderWorkInfo.Assign("resident", *friend.WorkInfo.Resident))
 		}
 		builderWorkInfo.Set(workFieldsWithValues...)
 
