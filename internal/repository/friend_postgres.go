@@ -125,16 +125,14 @@ func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfoTags, 
 	defer tx.Rollback()
 
 	var friends []models.Friend
-	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, dob, image_id, user_id FROM %s WHERE user_id = $1", friendTable)
+	friendQuery := fmt.Sprintf("SELECT * FROM %s WHERE user_id = $1", friendTable)
 	err = tx.Select(&friends, friendQuery, userID)
 	if err != nil {
 		return nil, err
 	}
 
 	var workInfos []models.WorkInfo
-	workInfoQuery := fmt.Sprintf(`SELECT w.id, w.country, w.city, w.company, w.position, 
-								w.messenger, w.communication_method, w.nationality, 
-								w.language, w.friend_id 
+	workInfoQuery := fmt.Sprintf(`SELECT w.* 
 								FROM %s w
 								INNER JOIN %s f ON w.friend_id = f.id
     							WHERE f.user_id = $1`, workInfoTable, friendTable)
@@ -143,7 +141,7 @@ func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfoTags, 
 		return nil, err
 	}
 
-	queryTags := fmt.Sprintf(`SELECT t.id, t.title, t.user_id 
+	queryTags := fmt.Sprintf(`SELECT t.* 
 							FROM %s t
 							INNER JOIN %s ft ON ft.tag_id = t.id 
 							WHERE ft.friend_id = $1`, tagTable, friendsTagsTable)
@@ -152,6 +150,7 @@ func (r *FriendPostgres) GetAll(userID uuid.UUID) ([]models.FriendWorkInfoTags, 
 	if err != nil {
 		return nil, err
 	}
+	defer tagStmt.Close()
 
 	var tags []models.Tag
 
@@ -188,16 +187,14 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 	defer tx.Rollback()
 
 	var friend models.Friend
-	friendQuery := fmt.Sprintf("SELECT id, first_name, last_name, dob, image_id, user_id FROM %s WHERE id = $1 AND user_id = $2", friendTable)
+	friendQuery := fmt.Sprintf("SELECT * FROM %s WHERE id = $1 AND user_id = $2", friendTable)
 	err = tx.Get(&friend, friendQuery, friendID, userID)
 	if err != nil {
 		return models.FriendWorkInfoTags{}, err
 	}
 
 	var workInfo models.WorkInfo
-	workInfoQuery := fmt.Sprintf(`SELECT w.id, w.country, w.city, w.company, w.position, 
-								w.messenger, w.communication_method, w.nationality, 
-								w.language , w.friend_id
+	workInfoQuery := fmt.Sprintf(`SELECT w.*
 								FROM %s w
 								INNER JOIN %s f ON w.friend_id = $1 
     							WHERE f.user_id = $2`, workInfoTable, friendTable)
@@ -206,7 +203,7 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 		return models.FriendWorkInfoTags{}, err
 	}
 
-	queryTags := fmt.Sprintf(`SELECT t.id, t.title, t.user_id 
+	queryTags := fmt.Sprintf(`SELECT t.*
 	FROM %s t
 	INNER JOIN %s ft ON ft.tag_id = t.id 
 	WHERE ft.friend_id = $1`, tagTable, friendsTagsTable)
@@ -216,7 +213,7 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 		return models.FriendWorkInfoTags{}, err
 	}
 
-	friendWorkInfo := models.FriendWorkInfoTags{
+	friendWorkInfoTags := models.FriendWorkInfoTags{
 		Friend:   friend,
 		WorkInfo: workInfo,
 		Tags:     tags,
@@ -226,7 +223,7 @@ func (r *FriendPostgres) GetByID(userID, friendID uuid.UUID) (models.FriendWorkI
 		return models.FriendWorkInfoTags{}, err
 	}
 
-	return friendWorkInfo, nil
+	return friendWorkInfoTags, nil
 }
 
 func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.UpdateFriendWorkInfoInput) error {
@@ -277,20 +274,22 @@ func (r *FriendPostgres) Update(userID, friendID uuid.UUID, friend models.Update
 			builderWorkInfo.Equal("friend_id", friendID),
 		)
 
-		fieldsToUpdateWorkInfo := map[string]*string{
+		fieldsToUpdateWorkInfo := map[string]any{
 			"country":              friend.WorkInfo.Country,
 			"city":                 friend.WorkInfo.City,
 			"company":              friend.WorkInfo.Company,
+			"profession":           friend.WorkInfo.Profession,
 			"position":             friend.WorkInfo.Position,
 			"messenger":            friend.WorkInfo.Messenger,
 			"communication_method": friend.WorkInfo.CommunicationMethod,
 			"nationality":          friend.WorkInfo.Nationality,
+			"resident":             friend.WorkInfo.Resident,
 			"language":             friend.WorkInfo.Language,
 		}
 
 		for field, value := range fieldsToUpdateWorkInfo {
 			if value != nil {
-				workFieldsWithValues = append(workFieldsWithValues, builderWorkInfo.Assign(field, *value))
+				workFieldsWithValues = append(workFieldsWithValues, builderWorkInfo.Assign(field, value))
 			}
 		}
 		builderWorkInfo.Set(workFieldsWithValues...)

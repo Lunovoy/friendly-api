@@ -43,7 +43,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			friendlist.POST("/", h.createFriendlist)
 			friendlist.GET("/", h.getAllFriendlists)
+			friendlist.GET("/full", h.getAllFriendlistsFull)
 			friendlist.GET("/:id", h.getFriendlistByID)
+			friendlist.GET("/:id/full", h.getFriendlistByIDFull)
 			friendlist.GET("/tag", h.getAllFriendlistsWithTags)
 			friendlist.GET("/:id/tag", h.getFriendlistByIDWithTags)
 			friendlist.GET("/friend", h.getAllFriendlistsWithFriends)

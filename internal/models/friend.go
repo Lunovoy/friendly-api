@@ -45,6 +45,6 @@ type FriendsTags struct {
 }
 
 type FriendWithTags struct {
-	Friendlist Friendlist `json:"friendlist"`
-	Tags       []Tag      `json:"tags"`
+	Friend Friend `json:"friend"`
+	Tags   []Tag  `json:"tags"`
 }

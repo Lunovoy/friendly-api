@@ -198,7 +198,7 @@ func (r *FriendlistPostgres) GetByIDWithFriends(userID, friendlistID uuid.UUID) 
 
 	var friendlist models.Friendlist
 
-	queryFriendlist := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
+	queryFriendlist := fmt.Sprintf("SELECT * FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
 
 	if err := tx.Get(&friendlist, queryFriendlist, friendlistID, userID); err != nil {
 		return models.FriendlistWithFriends{}, err

@@ -31,6 +31,7 @@ func (h *Handler) createFriendlist(c *gin.Context) {
 		"friendlist_id": friendlistID,
 	})
 }
+
 func (h *Handler) getAllFriendlists(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -46,6 +47,76 @@ func (h *Handler) getAllFriendlists(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]any{
 		"friendlists": friendlists,
+	})
+}
+
+func (h *Handler) getAllFriendlistsFull(c *gin.Context) {
+	userID, err := getUserIDFromCtx(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
+		return
+	}
+
+	friendlistsWithTags, err := h.services.Friendlist.GetAllWithTags(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	friendlistFull := make([]models.FriendlistFull, 0, len(friendlistsWithTags))
+
+	friendlistsWithFriends, err := h.services.Friendlist.GetAllWithFriends(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	friends, err := h.services.Friend.GetAll(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	type FriendsInFriendlist struct {
+		friendlistID uuid.UUID
+		friends      []models.FriendWorkInfoTags
+	}
+
+	friendsInFriendlists := make([]FriendsInFriendlist, 0, len(friendlistsWithTags))
+
+	friendsWithTags := []models.FriendWorkInfoTags{}
+
+	for _, friendlist := range friendlistsWithFriends {
+		for _, friendFromFriendlist := range friendlist.Friends {
+			for _, friend := range friends {
+				if friend.Friend.ID != friendFromFriendlist.ID {
+					continue
+				}
+				friendsWithTags = append(friendsWithTags, friend)
+			}
+
+		}
+		friendsInFriendlists = append(friendsInFriendlists, FriendsInFriendlist{
+			friendlistID: friendlist.Friendlist.ID,
+			friends:      friendsWithTags,
+		})
+		friendsWithTags = nil
+	}
+
+	for _, friendlistWithTag := range friendlistsWithTags {
+		for _, friendsInFriendlist := range friendsInFriendlists {
+			if friendsInFriendlist.friendlistID != friendlistWithTag.Friendlist.ID {
+				continue
+			}
+			friendlistFull = append(friendlistFull, models.FriendlistFull{
+				FriendlistWithTags: friendlistWithTag,
+				FriendsWithTags:    friendsInFriendlist.friends,
+			})
+		}
+	}
+
+	c.JSON(http.StatusOK, map[string]any{
+		"friendlists": friendlistFull,
 	})
 }
 
@@ -70,6 +141,49 @@ func (h *Handler) getFriendlistByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]any{
 		"friendlist": friendlist,
+	})
+}
+
+func (h *Handler) getFriendlistByIDFull(c *gin.Context) {
+	userID, err := getUserIDFromCtx(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
+		return
+	}
+
+	friendlistID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "invalid id param")
+		return
+	}
+
+	friendlistWithTags, err := h.services.Friendlist.GetByIDWithTags(userID, friendlistID)
+	if err != nil {
+		newErrorResponse(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	friendlistWithFriends, err := h.services.Friendlist.GetByIDWithFriends(userID, friendlistID)
+	if err != nil {
+		newErrorResponse(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	friends := []models.FriendWorkInfoTags{}
+	for _, friend := range friendlistWithFriends.Friends {
+		friendWithTags, err := h.services.Friend.GetByID(userID, friend.ID)
+		if err != nil {
+			newErrorResponse(c, http.StatusNotFound, err.Error())
+			return
+		}
+		friends = append(friends, friendWithTags)
+	}
+
+	c.JSON(http.StatusOK, map[string]any{
+		"friendlist_full": models.FriendlistFull{
+			FriendlistWithTags: friendlistWithTags,
+			FriendsWithTags:    friends,
+		},
 	})
 }
 
