@@ -255,20 +255,20 @@ func (r *FriendlistPostgres) Update(userID, friendlistID uuid.UUID, friendlist m
 	)
 
 	if friendlist.Title != nil {
-		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("first_name", *friendlist.Title))
+		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("title", *friendlist.Title))
 	}
 	if friendlist.Description != nil {
-		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("last_name", *friendlist.Description))
+		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("description", *friendlist.Description))
 	}
 	if friendlist.ImageID != nil {
-		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("dob", *friendlist.ImageID))
+		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("image_id", *friendlist.ImageID))
 	}
 
 	builderFriendlist.Set(friendlistFieldsWithValues...)
 
 	queryFriendlist, args := builderFriendlist.Build()
 
-	_, err := r.db.Exec(queryFriendlist, args)
+	_, err := r.db.Exec(queryFriendlist, args...)
 
 	return err
 }

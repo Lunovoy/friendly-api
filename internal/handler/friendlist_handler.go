@@ -309,7 +309,7 @@ func (h *Handler) updateFriendlist(c *gin.Context) {
 		return
 	}
 
-	if oldImageID != uuid.Nil {
+	if payload.ImageID != nil && oldImageID != uuid.Nil && *payload.ImageID != oldImageID {
 		err := deleteFile(fmt.Sprintf("%s%s%s", uploadDir, oldImageID, imageExtension))
 		if err != nil {
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
