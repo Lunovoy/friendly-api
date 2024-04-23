@@ -12,6 +12,13 @@ type Friendlist struct {
 	UserID      uuid.UUID `json:"user_id" db:"user_id"`
 }
 
+type UpdateFriendlist struct {
+	Title       *string    `json:"title" db:"title" binding:"required"`
+	Description *string    `json:"description" db:"description"`
+	ImageID     *uuid.UUID `json:"image_id" db:"image_id"`
+	UserID      *uuid.UUID `json:"user_id" db:"user_id"`
+}
+
 type FriendlistsTags struct {
 	ID           uuid.UUID `json:"id,omitempty" db:"id"`
 	FriendlistID uuid.UUID `json:"friendlist_id" db:"friendlist_id"`

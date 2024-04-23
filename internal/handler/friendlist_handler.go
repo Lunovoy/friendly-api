@@ -16,7 +16,7 @@ func (h *Handler) createFriendlist(c *gin.Context) {
 		return
 	}
 
-	var payload models.Friendlist
+	var payload models.UpdateFriendlist
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -284,11 +284,18 @@ func (h *Handler) updateFriendlist(c *gin.Context) {
 		return
 	}
 
-	var payload models.Friendlist
+	var payload models.UpdateFriendlist
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
+
+	friendlist, err := h.services.Friendlist.GetByID(userID, friendlistID)
+	if err != nil {
+		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("friendlist not found: %s", err.Error()))
+		return
+	}
+	oldImageID := friendlist.ImageID
 
 	_, err = h.services.Friendlist.GetByID(userID, friendlistID)
 	if err != nil {
@@ -300,6 +307,14 @@ func (h *Handler) updateFriendlist(c *gin.Context) {
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
+	}
+
+	if oldImageID != uuid.Nil {
+		err := deleteFile(fmt.Sprintf("%s%s%s", uploadDir, oldImageID, imageExtension))
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, statusResponse{
@@ -320,16 +335,26 @@ func (h *Handler) deleteFriendlist(c *gin.Context) {
 		return
 	}
 
-	_, err = h.services.Friendlist.GetByID(userID, friendlistID)
+	friendlist, err := h.services.Friendlist.GetByID(userID, friendlistID)
 	if err != nil {
 		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("friendlist not found or already deleted: %s", err.Error()))
 		return
 	}
 
+	oldImageID := friendlist.ImageID
+
 	err = h.services.Friendlist.DeleteByID(userID, friendlistID)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
+	}
+
+	if oldImageID != uuid.Nil {
+		err := deleteFile(fmt.Sprintf("%s%s%s", uploadDir, oldImageID, imageExtension))
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, statusResponse{

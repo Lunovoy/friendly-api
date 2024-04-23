@@ -16,7 +16,7 @@ func NewFriendlistService(repo repository.Friendlist) *FriendlistService {
 	}
 }
 
-func (s *FriendlistService) Create(userID uuid.UUID, friendlist models.Friendlist) (uuid.UUID, error) {
+func (s *FriendlistService) Create(userID uuid.UUID, friendlist models.UpdateFriendlist) (uuid.UUID, error) {
 	return s.repo.Create(userID, friendlist)
 }
 
@@ -44,7 +44,7 @@ func (s *FriendlistService) GetByIDWithFriends(userID, friendlistID uuid.UUID) (
 	return s.repo.GetByIDWithFriends(userID, friendlistID)
 }
 
-func (s *FriendlistService) Update(userID, friendlistID uuid.UUID, friendlist models.Friendlist) error {
+func (s *FriendlistService) Update(userID, friendlistID uuid.UUID, friendlist models.UpdateFriendlist) error {
 	return s.repo.Update(userID, friendlistID, friendlist)
 }
 

@@ -22,14 +22,14 @@ type Tag interface {
 }
 
 type Friendlist interface {
-	Create(userID uuid.UUID, friendlist models.Friendlist) (uuid.UUID, error)
+	Create(userID uuid.UUID, friendlist models.UpdateFriendlist) (uuid.UUID, error)
 	GetAll(userID uuid.UUID) ([]models.Friendlist, error)
 	GetByID(userID, friendlistID uuid.UUID) (models.Friendlist, error)
 	GetAllWithTags(userID uuid.UUID) ([]models.FriendlistWithTags, error)
 	GetByIDWithTags(userID, friendlistID uuid.UUID) (models.FriendlistWithTags, error)
 	GetAllWithFriends(userID uuid.UUID) ([]models.FriendlistWithFriends, error)
 	GetByIDWithFriends(userID, friendlistID uuid.UUID) (models.FriendlistWithFriends, error)
-	Update(userID, friendlistID uuid.UUID, friendlist models.Friendlist) error
+	Update(userID, friendlistID uuid.UUID, friendlist models.UpdateFriendlist) error
 	AddTagToFriendlist(friendlistID, tagID uuid.UUID) error
 	DeleteTagFromFriendlist(friendlistID, tagID uuid.UUID) error
 	AddFriendToFriendlist(friendlistID, friendID uuid.UUID) error

@@ -95,7 +95,7 @@ func (h *Handler) updateFriend(c *gin.Context) {
 
 	friend, err := h.services.Friend.GetByID(userID, friendID)
 	if err != nil {
-		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("friendlist not found: %s", err.Error()))
+		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("friend not found: %s", err.Error()))
 		return
 	}
 	oldImageID := friend.Friend.ImageID

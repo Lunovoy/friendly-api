@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/huandu/go-sqlbuilder"
 	"github.com/jmoiron/sqlx"
 	"github.com/lunovoy/friendly/internal/models"
 )
@@ -19,10 +20,7 @@ func NewFriendlistPostgres(db *sqlx.DB) *FriendlistPostgres {
 	}
 }
 
-// TODO: add dynamic queries in Create and Update;
-// add proper image deletion in friendlists
-
-func (r *FriendlistPostgres) Create(userID uuid.UUID, friendlist models.Friendlist) (uuid.UUID, error) {
+func (r *FriendlistPostgres) Create(userID uuid.UUID, friendlist models.UpdateFriendlist) (uuid.UUID, error) {
 
 	tx, err := r.db.Beginx()
 	if err != nil {
@@ -30,10 +28,29 @@ func (r *FriendlistPostgres) Create(userID uuid.UUID, friendlist models.Friendli
 	}
 	defer tx.Rollback()
 
-	var friendlistID uuid.UUID
-	query := fmt.Sprintf("INSERT INTO \"%s\" (title, description, image_id, user_id) VALUES ($1, $2, $3, $4) RETURNING id", friendlistTable)
+	friendlistFields := []string{"title", "user_id"}
+	friendlistValues := []any{*friendlist.Title, userID}
+	builderFriendlist := sqlbuilder.NewInsertBuilder()
+	builderFriendlist.SetFlavor(sqlbuilder.PostgreSQL)
+	builderFriendlist.InsertInto(friendlistTable)
 
-	row := tx.QueryRow(query, friendlist.Title, friendlist.Description, friendlist.ImageID, userID)
+	if friendlist.Description != nil {
+		friendlistFields = append(friendlistFields, "description")
+		friendlistValues = append(friendlistValues, *friendlist.Description)
+	}
+	if friendlist.ImageID != nil {
+		friendlistFields = append(friendlistFields, "image_id")
+		friendlistValues = append(friendlistValues, *friendlist.ImageID)
+	}
+
+	builderFriendlist.Cols(friendlistFields...).Values(friendlistValues...)
+
+	queryFriendlist, args := builderFriendlist.Build()
+	queryFriendlist += " RETURNING id;"
+
+	var friendlistID uuid.UUID
+
+	row := tx.QueryRow(queryFriendlist, args...)
 	if err := row.Scan(&friendlistID); err != nil {
 		return uuid.Nil, err
 	}
@@ -46,7 +63,7 @@ func (r *FriendlistPostgres) Create(userID uuid.UUID, friendlist models.Friendli
 func (r *FriendlistPostgres) GetAll(userID uuid.UUID) ([]models.Friendlist, error) {
 	var friendlists []models.Friendlist
 
-	query := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s where user_id = $1", friendlistTable)
+	query := fmt.Sprintf("SELECT * FROM %s where user_id = $1", friendlistTable)
 
 	err := r.db.Select(&friendlists, query, userID)
 
@@ -57,7 +74,7 @@ func (r *FriendlistPostgres) GetAll(userID uuid.UUID) ([]models.Friendlist, erro
 func (r *FriendlistPostgres) GetByID(userID, friendlistID uuid.UUID) (models.Friendlist, error) {
 	var friendlist models.Friendlist
 
-	query := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
 
 	err := r.db.Get(&friendlist, query, friendlistID, userID)
 
@@ -73,13 +90,13 @@ func (r *FriendlistPostgres) GetAllWithTags(userID uuid.UUID) ([]models.Friendli
 
 	var friendlists []models.Friendlist
 
-	queryFriendlists := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE user_id = $1", friendlistTable)
+	queryFriendlists := fmt.Sprintf("SELECT * FROM %s WHERE user_id = $1", friendlistTable)
 
 	if err := tx.Select(&friendlists, queryFriendlists, userID); err != nil {
 		return nil, err
 	}
 
-	queryTags := fmt.Sprintf(`SELECT t.id, t.title, t.user_id 
+	queryTags := fmt.Sprintf(`SELECT t.* 
 							FROM %s t
 							INNER JOIN %s ft ON ft.tag_id = t.id 
 							WHERE ft.friendlist_id = $1`, tagTable, friendlistsTagsTable)
@@ -117,13 +134,13 @@ func (r *FriendlistPostgres) GetByIDWithTags(userID, friendlistID uuid.UUID) (mo
 
 	var friendlist models.Friendlist
 
-	queryFriendlist := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
+	queryFriendlist := fmt.Sprintf("SELECT * FROM %s WHERE id = $1 AND user_id = $2", friendlistTable)
 
 	if err := tx.Get(&friendlist, queryFriendlist, friendlistID, userID); err != nil {
 		return models.FriendlistWithTags{}, err
 	}
 
-	queryTags := fmt.Sprintf(`SELECT t.id, t.title, t.user_id 
+	queryTags := fmt.Sprintf(`SELECT t.* 
 							FROM %s t
 							INNER JOIN %s ft ON ft.tag_id = t.id 
 							WHERE ft.friendlist_id = $1`, tagTable, friendlistsTagsTable)
@@ -154,7 +171,7 @@ func (r *FriendlistPostgres) GetAllWithFriends(userID uuid.UUID) ([]models.Frien
 
 	var friendlists []models.Friendlist
 
-	queryFriendlists := fmt.Sprintf("SELECT id, title, description, image_id, user_id FROM %s WHERE user_id = $1", friendlistTable)
+	queryFriendlists := fmt.Sprintf("SELECT * FROM %s WHERE user_id = $1", friendlistTable)
 
 	if err := tx.Select(&friendlists, queryFriendlists, userID); err != nil {
 		return nil, err
@@ -226,10 +243,32 @@ func (r *FriendlistPostgres) GetByIDWithFriends(userID, friendlistID uuid.UUID) 
 	return friendlistWithFriends, err
 }
 
-func (r *FriendlistPostgres) Update(userID, friendlistID uuid.UUID, friendlist models.Friendlist) error {
-	query := fmt.Sprintf("UPDATE %s SET title = $1, description = $2 WHERE id = $3 AND user_id = $4", friendlistTable)
+func (r *FriendlistPostgres) Update(userID, friendlistID uuid.UUID, friendlist models.UpdateFriendlist) error {
 
-	_, err := r.db.Exec(query, friendlist.Title, friendlist.Description, friendlistID, userID)
+	friendlistFieldsWithValues := []string{}
+	builderFriendlist := sqlbuilder.NewUpdateBuilder()
+	builderFriendlist.SetFlavor(sqlbuilder.PostgreSQL)
+	builderFriendlist.Update(friendlistTable)
+	builderFriendlist.Where(
+		builderFriendlist.Equal("id", friendlistID),
+		builderFriendlist.Equal("user_id", userID),
+	)
+
+	if friendlist.Title != nil {
+		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("first_name", *friendlist.Title))
+	}
+	if friendlist.Description != nil {
+		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("last_name", *friendlist.Description))
+	}
+	if friendlist.ImageID != nil {
+		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("dob", *friendlist.ImageID))
+	}
+
+	builderFriendlist.Set(friendlistFieldsWithValues...)
+
+	queryFriendlist, args := builderFriendlist.Build()
+
+	_, err := r.db.Exec(queryFriendlist, args)
 
 	return err
 }
