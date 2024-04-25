@@ -68,6 +68,16 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			friend.POST("/:id/tag", h.addTagToFriend)
 			friend.DELETE("/:id/tag/:tag_id", h.deleteTagFromFriend)
 		}
+
+		additionalInfoField := api.Group("/additional-field")
+		{
+			additionalInfoField.POST("/", h.createAdditionalInfoField)
+			additionalInfoField.GET("/", h.getAllAdditionalFields)
+			additionalInfoField.GET("/:id", h.getAdditionalFieldByID)
+			additionalInfoField.PUT("/:id", h.updateAdditionalField)
+			additionalInfoField.DELETE("/:id", h.deleteAdditionalField)
+		}
+
 		image := api.Group("/image")
 		{
 			image.POST("/", h.uploadImage)
