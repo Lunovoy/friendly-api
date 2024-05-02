@@ -30,6 +30,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	api := router.Group("/api", h.userIdentity)
 	{
+		profile := api.Group("/profile")
+		{
+			profile.GET("/", h.getProfile)
+			profile.PUT("/", h.updateProfile)
+		}
+
 		tags := api.Group("/tag")
 		{
 			tags.POST("/", h.createTag)
@@ -67,6 +73,17 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			friend.DELETE("/:id", h.deleteFriend)
 			friend.POST("/:id/tag", h.addTagToFriend)
 			friend.DELETE("/:id/tag/:tag_id", h.deleteTagFromFriend)
+		}
+
+		event := api.Group("/event")
+		{
+			event.POST("/", h.createEvent)
+			event.POST("/friends", h.addFriendsToEvent)
+			event.GET("/friend/:id", h.getEventsByFriendID)
+			event.GET("/", h.getAllEvents)
+			event.GET("/:id", h.getEventByID)
+			event.PUT("/:id", h.updateEvent)
+			event.DELETE("/:id", h.deleteEvent)
 		}
 
 		additionalInfoField := api.Group("/additional-field")

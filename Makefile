@@ -1,3 +1,5 @@
+.PHONY:
+
 build:
 	@go mod download && go build -o bin/friendly cmd/main.go
 

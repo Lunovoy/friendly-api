@@ -12,6 +12,11 @@ type Authorization interface {
 	GetUserByID(id uuid.UUID) (models.User, error)
 }
 
+type User interface {
+	Update(user models.UserUpdate, userID uuid.UUID) error
+	GetByID(userID uuid.UUID) (models.User, error)
+}
+
 type Tag interface {
 	Create(userID uuid.UUID, tag models.Tag) (uuid.UUID, error)
 	GetAll(userID uuid.UUID) ([]models.Tag, error)
@@ -46,21 +51,35 @@ type Friend interface {
 	DeleteTagFromFriend(friendID, tagID uuid.UUID) error
 }
 
+type Event interface {
+	Create(userID uuid.UUID, event models.Event) (uuid.UUID, error)
+	AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs []uuid.UUID) ([]uuid.UUID, error)
+	GetEventsByFriendID(userID, friendID uuid.UUID) ([]models.Event, error)
+	GetAll(userID uuid.UUID) ([]models.Event, error)
+	GetByID(userID, eventID uuid.UUID) (models.Event, error)
+	Update(userID, eventID uuid.UUID, event models.Event) error
+	DeleteByID(userID, eventID uuid.UUID) error
+}
+
 type AdditionalInfoField interface {
 }
 
 type Repository struct {
 	Authorization
+	User
 	Tag
 	Friendlist
 	Friend
+	Event
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthPostgres(db),
+		User:          NewUserPostgres(db),
 		Tag:           NewTagPostgres(db),
 		Friendlist:    NewFriendlistPostgres(db),
 		Friend:        NewFriendPostgres(db),
+		Event:         NewEventPostgres(db),
 	}
 }

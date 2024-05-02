@@ -13,6 +13,11 @@ type Authorization interface {
 	ParseToken(accessToken string) (uuid.UUID, error)
 }
 
+type User interface {
+	Update(user models.UserUpdate, userID uuid.UUID) error
+	GetByID(userID uuid.UUID) (models.User, error)
+}
+
 type Tag interface {
 	Create(userID uuid.UUID, tag models.Tag) (uuid.UUID, error)
 	GetAll(userID uuid.UUID) ([]models.Tag, error)
@@ -47,21 +52,35 @@ type Friend interface {
 	DeleteTagFromFriend(friendID, tagID uuid.UUID) error
 }
 
+type Event interface {
+	Create(userID uuid.UUID, event models.Event) (uuid.UUID, error)
+	AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs []uuid.UUID) error
+	GetEventsByFriendID(userID, friendID uuid.UUID) ([]models.Event, error)
+	GetAll(userID uuid.UUID) ([]models.Event, error)
+	GetByID(userID, eventID uuid.UUID) (models.Event, error)
+	Update(userID, eventID uuid.UUID, event models.Event) error
+	DeleteByID(userID, eventID uuid.UUID) error
+}
+
 type AdditionalInfoField interface {
 }
 
 type Service struct {
 	Authorization
+	User
 	Tag
 	Friendlist
 	Friend
+	Event
 }
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repo.Authorization),
+		User:          NewUserService(repo.User),
 		Tag:           NewTagService(repo.Tag),
 		Friendlist:    NewFriendlistService(repo.Friendlist),
 		Friend:        NewFriendService(repo.Friend),
+		Event:         NewEventService(repo.Event),
 	}
 }
