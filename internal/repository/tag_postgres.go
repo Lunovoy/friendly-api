@@ -69,7 +69,7 @@ func (r *TagPostgres) Update(userID, tagID uuid.UUID, tag models.Tag) error {
 }
 
 func (r *TagPostgres) DeleteByID(userID, tagID uuid.UUID) error {
-	query := fmt.Sprintf("DELETE FROM %s where id=$1 AND user_id=$2", tagTable)
+	query := fmt.Sprintf("DELETE FROM %s WHERE id=$1 AND user_id=$2", tagTable)
 
 	_, err := r.db.Exec(query, tagID, userID)
 
