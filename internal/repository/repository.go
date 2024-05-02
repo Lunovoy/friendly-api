@@ -53,11 +53,13 @@ type Friend interface {
 
 type Event interface {
 	Create(userID uuid.UUID, event models.Event) (uuid.UUID, error)
-	AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs []uuid.UUID) ([]uuid.UUID, error)
+	AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs []models.FriendID) ([]uuid.UUID, error)
 	GetEventsByFriendID(userID, friendID uuid.UUID) ([]models.Event, error)
 	GetAll(userID uuid.UUID) ([]models.Event, error)
 	GetByID(userID, eventID uuid.UUID) (models.Event, error)
-	Update(userID, eventID uuid.UUID, event models.Event) error
+	GetAllWithFriends(userID uuid.UUID) ([]models.EventWithFriends, error)
+	GetByIDWithFriends(userID, eventID uuid.UUID) (models.EventWithFriends, error)
+	Update(userID, eventID uuid.UUID, event models.EventUpdate) error
 	DeleteByID(userID, eventID uuid.UUID) error
 }
 

@@ -41,19 +41,27 @@ func (h *Handler) addFriendsToEvent(c *gin.Context) {
 		return
 	}
 
-	var payload models.Event
+	var payload []models.FriendID
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	eventID, err := h.services.Event.Create(userID, payload)
+	eventID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "invalid id param")
+		return
+	}
+
+	ids, err := h.services.Event.AddFriendsToEvent(userID, eventID, payload)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	c.JSON(http.StatusCreated, map[string]any{
 		"status": "ok",
+		"IDs":    ids,
 	})
 }
 
@@ -63,6 +71,22 @@ func (h *Handler) getEventsByFriendID(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
 		return
 	}
+
+	friendID, err := uuid.Parse(c.Param("friend_id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "invalid id param")
+		return
+	}
+
+	events, err := h.services.Event.GetEventsByFriendID(userID, friendID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]any{
+		"events": events,
+	})
 }
 
 func (h *Handler) getAllEvents(c *gin.Context) {
@@ -108,6 +132,49 @@ func (h *Handler) getEventByID(c *gin.Context) {
 	})
 }
 
+func (h *Handler) getAllEventsWithFriends(c *gin.Context) {
+	userID, err := getUserIDFromCtx(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
+		return
+	}
+
+	events, err := h.services.Event.GetAllWithFriends(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]any{
+		"events": events,
+	})
+
+}
+
+func (h *Handler) getEventByIDWithFriends(c *gin.Context) {
+	userID, err := getUserIDFromCtx(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
+		return
+	}
+
+	eventID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "invalid id param")
+		return
+	}
+
+	event, err := h.services.Event.GetByIDWithFriends(userID, eventID)
+	if err != nil {
+		newErrorResponse(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]any{
+		"event": event,
+	})
+}
+
 func (h *Handler) updateEvent(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -121,7 +188,7 @@ func (h *Handler) updateEvent(c *gin.Context) {
 		return
 	}
 
-	var payload models.Event
+	var payload models.EventUpdate
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return

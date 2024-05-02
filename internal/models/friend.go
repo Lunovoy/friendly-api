@@ -15,6 +15,7 @@ type Friend struct {
 	ImageID   uuid.UUID    `json:"image_id" db:"image_id"`
 	UserID    uuid.UUID    `json:"user_id" db:"user_id"`
 }
+
 type UpdateFriendInput struct {
 	FirstName *string    `json:"first_name"`
 	LastName  *string    `json:"last_name"`
@@ -47,4 +48,8 @@ type FriendsTags struct {
 type FriendWithTags struct {
 	Friend Friend `json:"friend"`
 	Tags   []Tag  `json:"tags"`
+}
+
+type FriendID struct {
+	FriendID uuid.UUID `json:"friend_id"`
 }

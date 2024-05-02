@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/huandu/go-sqlbuilder"
 	"github.com/jmoiron/sqlx"
 	"github.com/lunovoy/friendly/internal/models"
 )
@@ -40,7 +41,7 @@ func (r *EventPostgres) Create(userID uuid.UUID, event models.Event) (uuid.UUID,
 	return eventID, nil
 }
 
-func (r *EventPostgres) AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs []uuid.UUID) ([]uuid.UUID, error) {
+func (r *EventPostgres) AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs []models.FriendID) ([]uuid.UUID, error) {
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return nil, err
@@ -56,7 +57,7 @@ func (r *EventPostgres) AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs [
 	ids := []uuid.UUID{}
 	var id uuid.UUID
 	for _, friendID := range friendIDs {
-		row := stmt.QueryRow(stmt, friendID, eventID)
+		row := stmt.QueryRow(friendID.FriendID, eventID)
 		if err := row.Scan(&id); err != nil {
 			return nil, err
 		}
@@ -87,7 +88,7 @@ func (r *EventPostgres) GetEventsByFriendID(userID, friendID uuid.UUID) ([]model
 func (r *EventPostgres) GetAll(userID uuid.UUID) ([]models.Event, error) {
 	var events []models.Event
 
-	query := fmt.Sprintf("SELECT * FROM %s where user_id = $1", eventTable)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE user_id = $1", eventTable)
 
 	err := r.db.Select(&events, query, userID)
 
@@ -100,15 +101,137 @@ func (r *EventPostgres) GetByID(userID, eventID uuid.UUID) (models.Event, error)
 
 	query := fmt.Sprintf("SELECT * FROM %s WHERE id = $1 AND user_id = $2", eventTable)
 
+	fmt.Println("Event: ", eventID, "User: ", userID)
 	err := r.db.Get(&event, query, eventID, userID)
 
 	return event, err
 }
 
-func (r *EventPostgres) Update(userID, eventID uuid.UUID, event models.Event) error {
-	query := fmt.Sprintf("UPDATE %s SET title = $1, description = $2, start_date = $3, end_date = $4 WHERE id = $5 AND user_id = $6", eventTable)
+func (r *EventPostgres) GetByIDWithFriends(userID, eventID uuid.UUID) (models.EventWithFriends, error) {
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return models.EventWithFriends{}, err
+	}
+	defer tx.Rollback()
 
-	_, err := r.db.Exec(query, event.Title, event.Description, event.StartDate, event.EndDate, eventID, userID)
+	queryEvent := fmt.Sprintf("SELECT * FROM %s WHERE id = $1 AND user_id = $2", eventTable)
+
+	var event models.Event
+
+	err = tx.Get(&event, queryEvent, eventID, userID)
+	if err != nil {
+		return models.EventWithFriends{}, err
+	}
+
+	queryFriends := fmt.Sprintf(`SELECT f.* 
+								FROM %s f
+								JOIN %s fe ON f.id = fe.friend_id
+								WHERE fe.event_id = $1 AND f.user_id = $2`, friendTable, friendsEventsTable)
+
+	var friends []models.Friend
+
+	err = tx.Select(&friends, queryFriends, eventID, userID)
+	if err != nil {
+		return models.EventWithFriends{}, err
+	}
+
+	eventWithFriends := models.EventWithFriends{
+		Event:   event,
+		Friends: friends,
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return models.EventWithFriends{}, err
+	}
+
+	return eventWithFriends, nil
+}
+
+func (r *EventPostgres) GetAllWithFriends(userID uuid.UUID) ([]models.EventWithFriends, error) {
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	queryEvents := fmt.Sprintf("SELECT * FROM %s WHERE user_id = $1", eventTable)
+
+	var events []models.Event
+	err = tx.Select(&events, queryEvents, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var eventWithFriendsList []models.EventWithFriends
+
+	queryFriends := fmt.Sprintf(`SELECT f.* 
+								FROM %s f
+								JOIN %s fe ON f.id = fe.friend_id
+								WHERE fe.event_id = $1 AND f.user_id = $2`, friendTable, friendsEventsTable)
+
+	friendsStmt, err := tx.Preparex(queryFriends)
+	if err != nil {
+		return nil, err
+	}
+	defer friendsStmt.Close()
+
+	for _, event := range events {
+
+		var friends []models.Friend
+		err = friendsStmt.Select(&friends, event.ID, userID)
+		if err != nil {
+			return nil, err
+		}
+
+		eventWithFriends := models.EventWithFriends{
+			Event:   event,
+			Friends: friends,
+		}
+
+		eventWithFriendsList = append(eventWithFriendsList, eventWithFriends)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return eventWithFriendsList, nil
+
+}
+
+func (r *EventPostgres) Update(userID, eventID uuid.UUID, event models.EventUpdate) error {
+
+	eventFieldsWithValues := []string{}
+	builderEvent := sqlbuilder.NewUpdateBuilder()
+	builderEvent.SetFlavor(sqlbuilder.PostgreSQL)
+	builderEvent.Update(eventTable)
+	builderEvent.Where(
+		builderEvent.Equal("id", eventID),
+		builderEvent.Equal("user_id", userID),
+	)
+
+	if event.Title != nil {
+		eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("title", *event.Title))
+	}
+	if event.Description != nil {
+		eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("description", *event.Description))
+	}
+	if event.StartDate != nil {
+		eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("start_date", *event.StartDate))
+	}
+	if event.EndDate != nil {
+		eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("end_date", *event.EndDate))
+	}
+
+	builderEvent.Set(eventFieldsWithValues...)
+
+	queryFriend, args := builderEvent.Build()
+	_, err := r.db.Exec(queryFriend, args...)
+	if err != nil {
+		return err
+	}
 
 	return err
 }

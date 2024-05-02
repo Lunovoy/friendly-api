@@ -78,10 +78,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		event := api.Group("/event")
 		{
 			event.POST("/", h.createEvent)
-			event.POST("/friends", h.addFriendsToEvent)
-			event.GET("/friend/:id", h.getEventsByFriendID)
+			event.POST("/:id/friends", h.addFriendsToEvent)
+			event.GET("/friend/:friend_id", h.getEventsByFriendID)
 			event.GET("/", h.getAllEvents)
 			event.GET("/:id", h.getEventByID)
+			event.GET("/friends", h.getAllEventsWithFriends)
+			event.GET("/:id/friends", h.getEventByIDWithFriends)
 			event.PUT("/:id", h.updateEvent)
 			event.DELETE("/:id", h.deleteEvent)
 		}
