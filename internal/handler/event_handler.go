@@ -9,6 +9,19 @@ import (
 	"github.com/lunovoy/friendly/internal/models"
 )
 
+// @Summary Create Event
+// @Security ApiKeyAuth
+// @Tags event
+// @Description create event
+// @ID create-event
+// @Accept  json
+// @Produce  json
+// @Param input body models.Event true "Event info"
+// @Success 201 {string} uuid
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event [post]
 func (h *Handler) createEvent(c *gin.Context) {
 
 	userID, err := getUserIDFromCtx(c)
@@ -33,6 +46,9 @@ func (h *Handler) createEvent(c *gin.Context) {
 	})
 
 }
+
+// TODO: add friends addition while creating event
+// add deletion friends from events
 
 func (h *Handler) addFriendsToEvent(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
@@ -65,6 +81,18 @@ func (h *Handler) addFriendsToEvent(c *gin.Context) {
 	})
 }
 
+// @Summary Get Event By Friend ID
+// @Security ApiKeyAuth
+// @Tags event
+// @Description get event by friend id
+// @ID get-event-by-friend-id
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllEventsResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event//friend/:friend_id [get]
 func (h *Handler) getEventsByFriendID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -84,11 +112,23 @@ func (h *Handler) getEventsByFriendID(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"events": events,
+	c.JSON(http.StatusOK, getAllEventsResponse{
+		Data: events,
 	})
 }
 
+// @Summary Get All Events
+// @Security ApiKeyAuth
+// @Tags event
+// @Description get all events
+// @ID get-all-events
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllEventsResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event [get]
 func (h *Handler) getAllEvents(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -102,12 +142,24 @@ func (h *Handler) getAllEvents(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"events": events,
+	c.JSON(http.StatusOK, getAllEventsResponse{
+		Data: events,
 	})
 
 }
 
+// @Summary Get Event By Id
+// @Security ApiKeyAuth
+// @Tags event
+// @Description get event by id
+// @ID get-event-by-id
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Event
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event/:id [get]
 func (h *Handler) getEventByID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -132,6 +184,18 @@ func (h *Handler) getEventByID(c *gin.Context) {
 	})
 }
 
+// @Summary Get All Events With Friends
+// @Security ApiKeyAuth
+// @Tags event
+// @Description get all events with friends
+// @ID get-all-events-with-friends
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllEventsWithFriendsResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event/friends [get]
 func (h *Handler) getAllEventsWithFriends(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -145,12 +209,24 @@ func (h *Handler) getAllEventsWithFriends(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"events": events,
+	c.JSON(http.StatusOK, getAllEventsWithFriendsResponse{
+		Data: events,
 	})
 
 }
 
+// @Summary Get Event By Id With Friends
+// @Security ApiKeyAuth
+// @Tags event
+// @Description get event by id with friends
+// @ID get-event-by-id-with-friends
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.EventWithFriends
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event/:id/friends [get]
 func (h *Handler) getEventByIDWithFriends(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -175,6 +251,19 @@ func (h *Handler) getEventByIDWithFriends(c *gin.Context) {
 	})
 }
 
+// @Summary Update Event
+// @Security ApiKeyAuth
+// @Tags event
+// @Description update event
+// @ID update-event
+// @Accept  json
+// @Produce  json
+// @Param input body models.EventUpdate true "Event info"
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event/:id [put]
 func (h *Handler) updateEvent(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -211,6 +300,18 @@ func (h *Handler) updateEvent(c *gin.Context) {
 	})
 }
 
+// @Summary Delete Event
+// @Security ApiKeyAuth
+// @Tags event
+// @Description delete event
+// @ID delete-event
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event/:id [delete]
 func (h *Handler) deleteEvent(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {

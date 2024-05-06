@@ -8,6 +8,7 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	_ "github.com/lunovoy/friendly/docs"
 	"github.com/sirupsen/logrus"
 
 	"github.com/lunovoy/friendly/internal/handler"
@@ -19,6 +20,16 @@ import (
 
 const uploadDir = "./images/"
 
+// @title Friendly app API
+// @version 1.0
+// @description API Server for Friendly Application
+
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	if _, err := os.Stat(uploadDir); os.IsNotExist(err) {
 		os.Mkdir(uploadDir, os.ModePerm)

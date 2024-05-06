@@ -9,6 +9,19 @@ import (
 	"github.com/lunovoy/friendly/internal/models"
 )
 
+// @Summary Create Tag
+// @Security ApiKeyAuth
+// @Tags tag
+// @Description create tag
+// @ID create-tag
+// @Accept  json
+// @Produce  json
+// @Param input body models.Tag true "Tag info"
+// @Success 201 {string} uuid
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/tag [post]
 func (h *Handler) createTag(c *gin.Context) {
 
 	userID, err := getUserIDFromCtx(c)
@@ -33,6 +46,19 @@ func (h *Handler) createTag(c *gin.Context) {
 	})
 
 }
+
+// @Summary Get All Tags
+// @Security ApiKeyAuth
+// @Tags tag
+// @Description get all tags
+// @ID get-all-tags
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllTagsResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/tag [get]
 func (h *Handler) getAllTags(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -46,12 +72,24 @@ func (h *Handler) getAllTags(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"tags": tags,
+	c.JSON(http.StatusOK, getAllTagsResponse{
+		Data: tags,
 	})
 
 }
 
+// @Summary Get Tag By Id
+// @Security ApiKeyAuth
+// @Tags tag
+// @Description get tag by id
+// @ID get-tag-by-id
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Tag
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/tag/:id [get]
 func (h *Handler) getTagByID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -76,6 +114,19 @@ func (h *Handler) getTagByID(c *gin.Context) {
 	})
 }
 
+// @Summary Update Tag
+// @Security ApiKeyAuth
+// @Tags tag
+// @Description update tag
+// @ID update-tag
+// @Accept  json
+// @Produce  json
+// @Param input body models.Tag true "Tag info"
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/tag/:id [put]
 func (h *Handler) updateTag(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -112,6 +163,18 @@ func (h *Handler) updateTag(c *gin.Context) {
 	})
 }
 
+// @Summary Delete Tag
+// @Security ApiKeyAuth
+// @Tags tag
+// @Description delete tag
+// @ID delete-tag
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/tag/:id [delete]
 func (h *Handler) deleteTag(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {

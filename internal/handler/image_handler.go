@@ -14,6 +14,20 @@ import (
 	"github.com/nfnt/resize"
 )
 
+// @Summary Upload Image
+// @Security ApiKeyAuth
+// @Tags image
+// @Description upload image
+// @ID upload-image
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param image formData file true "Image file to upload"
+// @Success 201 {object} map[string]any "Successfully uploaded image"
+// @Failure 400 {object} errorResponse
+// @Failure 415 {object} errorResponse "Invalid file type. Only JPG files are allowed."
+// @Failure 500 {object} errorResponse "Internal server error"
+// @Failure default {object} errorResponse
+// @Router /api/image [post]
 func (h *Handler) uploadImage(c *gin.Context) {
 
 	if err := c.Request.ParseMultipartForm(maxFileSize); err != nil {
@@ -28,7 +42,7 @@ func (h *Handler) uploadImage(c *gin.Context) {
 	}
 	// Проверяем тип файла
 	if file.Header.Get("Content-Type") != "image/jpeg" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid file type. Only JPG files are allowed."})
+		c.JSON(http.StatusUnsupportedMediaType, gin.H{"error": "Invalid file type. Only JPG files are allowed."})
 		return
 	}
 
@@ -64,6 +78,21 @@ func (h *Handler) uploadImage(c *gin.Context) {
 	})
 }
 
+// @Summary Get Image
+// @Security ApiKeyAuth
+// @Tags image
+// @Description get image by ID and resolution
+// @ID get-image
+// @Accept  json
+// @Produce  image/jpeg
+// @Param id path string true "Image ID"
+// @Param res path int true "Resolution" Format(int64)
+// @Success 200 {string} image/jpeg "Successfully retrieved image"
+// @Failure 400 {object} errorResponse
+// @Failure 404 {object} errorResponse "Image not found"
+// @Failure 500 {object} errorResponse "Internal server error"
+// @Failure default {object} errorResponse
+// @Router /api/image/:id/:res [get]
 func (h *Handler) getImage(c *gin.Context) {
 	imageID := c.Param("id")
 	resolutionString := c.Param("res")
@@ -110,6 +139,18 @@ func (h *Handler) getImage(c *gin.Context) {
 
 }
 
+// @Summary Delete Image
+// @Security ApiKeyAuth
+// @Tags image
+// @Description delete image by ID
+// @ID delete-image
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} map[string]string "Image deleted successfully"
+// @Failure 404 {object} errorResponse "Image not found"
+// @Failure 500 {object} errorResponse "Internal server error"
+// @Failure default {object} errorResponse
+// @Router /api/image/:id [delete]
 func (h *Handler) deleteImage(c *gin.Context) {
 	friendID := c.Param("id")
 	filePath := fmt.Sprintf("%s%s", uploadDir, friendID+".jpg")

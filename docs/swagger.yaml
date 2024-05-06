@@ -1,0 +1,1638 @@
+basePath: /
+definitions:
+  github_com_lunovoy_friendly_internal_models.AdditionTag:
+    properties:
+      tag_id:
+        type: string
+    required:
+    - tag_id
+    type: object
+  github_com_lunovoy_friendly_internal_models.Event:
+    properties:
+      description:
+        type: string
+      end_date:
+        $ref: '#/definitions/sql.NullTime'
+      id:
+        type: string
+      start_date:
+        $ref: '#/definitions/sql.NullTime'
+      start_notify_sent:
+        type: boolean
+      title:
+        type: string
+      user_id:
+        type: string
+    required:
+    - title
+    type: object
+  github_com_lunovoy_friendly_internal_models.EventUpdate:
+    properties:
+      description:
+        type: string
+      end_date:
+        $ref: '#/definitions/sql.NullTime'
+      start_date:
+        $ref: '#/definitions/sql.NullTime'
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  github_com_lunovoy_friendly_internal_models.EventWithFriends:
+    properties:
+      event:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Event'
+      friends:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Friend'
+        type: array
+    type: object
+  github_com_lunovoy_friendly_internal_models.Friend:
+    properties:
+      dob:
+        $ref: '#/definitions/sql.NullTime'
+      first_name:
+        type: string
+      id:
+        type: string
+      image_id:
+        type: string
+      last_name:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_lunovoy_friendly_internal_models.FriendWorkInfoTags:
+    properties:
+      friend:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Friend'
+      tags:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Tag'
+        type: array
+      work_info:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.WorkInfo'
+    type: object
+  github_com_lunovoy_friendly_internal_models.Friendlist:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      image_id:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    required:
+    - title
+    type: object
+  github_com_lunovoy_friendly_internal_models.FriendlistFull:
+    properties:
+      friendlist:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendlistWithTags'
+      friends:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendWorkInfoTags'
+        type: array
+    type: object
+  github_com_lunovoy_friendly_internal_models.FriendlistWithFriends:
+    properties:
+      friendlist:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Friendlist'
+      friends:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Friend'
+        type: array
+    type: object
+  github_com_lunovoy_friendly_internal_models.FriendlistWithTags:
+    properties:
+      friendlist:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Friendlist'
+      tags:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Tag'
+        type: array
+    type: object
+  github_com_lunovoy_friendly_internal_models.Tag:
+    properties:
+      id:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    required:
+    - title
+    type: object
+  github_com_lunovoy_friendly_internal_models.UpdateFriendInput:
+    properties:
+      dob:
+        type: string
+      first_name:
+        type: string
+      image_id:
+        type: string
+      last_name:
+        type: string
+    type: object
+  github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoInput:
+    properties:
+      friend:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendInput'
+      work_info:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateWorkInfoInput'
+    type: object
+  github_com_lunovoy_friendly_internal_models.UpdateFriendlist:
+    properties:
+      description:
+        type: string
+      image_id:
+        type: string
+      title:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_lunovoy_friendly_internal_models.UpdateWorkInfoInput:
+    properties:
+      city:
+        type: string
+      communication_method:
+        type: string
+      company:
+        type: string
+      country:
+        type: string
+      language:
+        type: string
+      messenger:
+        type: string
+      nationality:
+        type: string
+      position:
+        type: string
+      profession:
+        type: string
+      resident:
+        type: boolean
+    type: object
+  github_com_lunovoy_friendly_internal_models.User:
+    properties:
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      mail:
+        type: string
+      middle_name:
+        type: string
+      password:
+        type: string
+      salt:
+        type: string
+      tg_username:
+        type: string
+      username:
+        type: string
+    required:
+    - mail
+    - password
+    type: object
+  github_com_lunovoy_friendly_internal_models.UserUpdate:
+    properties:
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      mail:
+        type: string
+      middle_name:
+        type: string
+      tg_username:
+        type: string
+      username:
+        type: string
+    required:
+    - mail
+    type: object
+  github_com_lunovoy_friendly_internal_models.WorkInfo:
+    properties:
+      city:
+        type: string
+      communication_method:
+        type: string
+      company:
+        type: string
+      country:
+        type: string
+      friend_id:
+        type: string
+      id:
+        type: string
+      language:
+        type: string
+      messenger:
+        type: string
+      nationality:
+        type: string
+      position:
+        type: string
+      profession:
+        type: string
+      resident:
+        type: boolean
+    type: object
+  internal_handler.errorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  internal_handler.getAllEventsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Event'
+        type: array
+    type: object
+  internal_handler.getAllEventsWithFriendsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithFriends'
+        type: array
+    type: object
+  internal_handler.getAllFriendlistsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Friendlist'
+        type: array
+    type: object
+  internal_handler.getAllFriendlistsWithFriendsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendlistWithFriends'
+        type: array
+    type: object
+  internal_handler.getAllFriendsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendWorkInfoTags'
+        type: array
+    type: object
+  internal_handler.getAllTagsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Tag'
+        type: array
+    type: object
+  internal_handler.signInPayload:
+    properties:
+      mail:
+        type: string
+      password:
+        type: string
+    required:
+    - mail
+    - password
+    type: object
+  internal_handler.statusResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  sql.NullTime:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API Server for Friendly Application
+  title: Friendly app API
+  version: "1.0"
+paths:
+  /api/event:
+    get:
+      consumes:
+      - application/json
+      description: get all events
+      operationId: get-all-events
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllEventsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Events
+      tags:
+      - event
+    post:
+      consumes:
+      - application/json
+      description: create event
+      operationId: create-event
+      parameters:
+      - description: Event info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Event'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Event
+      tags:
+      - event
+  /api/event//friend/:friend_id:
+    get:
+      consumes:
+      - application/json
+      description: get event by friend id
+      operationId: get-event-by-friend-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllEventsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Event By Friend ID
+      tags:
+      - event
+  /api/event/:id:
+    delete:
+      consumes:
+      - application/json
+      description: delete event
+      operationId: delete-event
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Event
+      tags:
+      - event
+    get:
+      consumes:
+      - application/json
+      description: get event by id
+      operationId: get-event-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Event'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Event By Id
+      tags:
+      - event
+    put:
+      consumes:
+      - application/json
+      description: update event
+      operationId: update-event
+      parameters:
+      - description: Event info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Event
+      tags:
+      - event
+  /api/event/:id/friends:
+    get:
+      consumes:
+      - application/json
+      description: get event by id with friends
+      operationId: get-event-by-id-with-friends
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithFriends'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Event By Id With Friends
+      tags:
+      - event
+  /api/event/friends:
+    get:
+      consumes:
+      - application/json
+      description: get all events with friends
+      operationId: get-all-events-with-friends
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllEventsWithFriendsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Events With Friends
+      tags:
+      - event
+  /api/friend:
+    get:
+      consumes:
+      - application/json
+      description: get all friends
+      operationId: get-all-friends
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllFriendsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Friends
+      tags:
+      - friend
+    post:
+      consumes:
+      - application/json
+      description: create friend
+      operationId: create-friend
+      parameters:
+      - description: Friend info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Friend
+      tags:
+      - friend
+  /api/friend/:id:
+    delete:
+      consumes:
+      - application/json
+      description: delete friend
+      operationId: delete-friend
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Friend
+      tags:
+      - friend
+    get:
+      consumes:
+      - application/json
+      description: get friend by id
+      operationId: get-friend-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendWorkInfoTags'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Friend By ID
+      tags:
+      - friend
+    put:
+      consumes:
+      - application/json
+      description: update friend
+      operationId: update-friend
+      parameters:
+      - description: Friend info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Friend
+      tags:
+      - friend
+  /api/friend/:id/tag:
+    post:
+      consumes:
+      - application/json
+      description: add tag to friend
+      operationId: add-tag-to-friend
+      parameters:
+      - description: Add Tag
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.AdditionTag'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Add Tag To Friend
+      tags:
+      - friend
+  /api/friend/:id/tag/tag_id:
+    delete:
+      consumes:
+      - application/json
+      description: delete tag from friend
+      operationId: delete-tag-from-friend
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Tag From Friend
+      tags:
+      - friend
+  /api/friendlist:
+    get:
+      consumes:
+      - application/json
+      description: get all friendlists
+      operationId: get-all-friendlists
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllFriendlistsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Friendlists
+      tags:
+      - friendlist
+    post:
+      consumes:
+      - application/json
+      description: create friendlist
+      operationId: create-friendlist
+      parameters:
+      - description: Friendlist info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendlist'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Friendlist
+      tags:
+      - friendlist
+  /api/friendlist/:id:
+    get:
+      consumes:
+      - application/json
+      description: get friendlist by id
+      operationId: get-friendlist-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Friendlist'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Friendlist By Id
+      tags:
+      - friendlist
+  /api/friendlist/:id/friend:
+    get:
+      consumes:
+      - application/json
+      description: get friendlist by id with friends
+      operationId: get-friendlist-by-id-with-friends
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendlistWithFriends'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Friendlist By ID With Friends
+      tags:
+      - friendlist
+  /api/friendlist/:id/full:
+    get:
+      consumes:
+      - application/json
+      description: get friendlist full by id
+      operationId: get-friendlist-full-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendlistFull'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Friendlist Full By ID
+      tags:
+      - friendlist
+  /api/friendlist/:id/tag:
+    get:
+      consumes:
+      - application/json
+      description: get friendlist by id with tags
+      operationId: get-friendlist-by-id-with-tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendlistWithTags'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Friendlist By ID With Tags
+      tags:
+      - friendlist
+  /api/friendlist/friend:
+    get:
+      consumes:
+      - application/json
+      description: get all friendlists with friends
+      operationId: get-all-friendlists-with-friends
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllFriendlistsWithFriendsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Friendlists With Friends
+      tags:
+      - friendlist
+  /api/friendlist/full:
+    get:
+      consumes:
+      - application/json
+      description: get all friendlists full
+      operationId: get-all-friendlists-full
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllFriendlistsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Friendlists Full
+      tags:
+      - friendlist
+  /api/friendlist/tag:
+    get:
+      consumes:
+      - application/json
+      description: get all friendlists with tags
+      operationId: get-all-friendlists-with-tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllFriendlistsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Friendlists With Tags
+      tags:
+      - friendlist
+  /api/image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: upload image
+      operationId: upload-image
+      parameters:
+      - description: Image file to upload
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully uploaded image
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "415":
+          description: Invalid file type. Only JPG files are allowed.
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Upload Image
+      tags:
+      - image
+  /api/image/:id:
+    delete:
+      consumes:
+      - application/json
+      description: delete image by ID
+      operationId: delete-image
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Image deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Image not found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Image
+      tags:
+      - image
+  /api/image/:id/:res:
+    get:
+      consumes:
+      - application/json
+      description: get image by ID and resolution
+      operationId: get-image
+      parameters:
+      - description: Image ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Resolution
+        format: int64
+        in: path
+        name: res
+        required: true
+        type: integer
+      produces:
+      - image/jpeg
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Image not found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Image
+      tags:
+      - image
+  /api/profile:
+    put:
+      consumes:
+      - application/json
+      description: update user profile
+      operationId: update-profile
+      parameters:
+      - description: User update payload
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UserUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated profile
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Profile
+      tags:
+      - profile
+  /api/profile/:
+    get:
+      consumes:
+      - application/json
+      description: get profile
+      operationId: get-profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Profile
+      tags:
+      - profile
+  /api/tag:
+    get:
+      consumes:
+      - application/json
+      description: get all tags
+      operationId: get-all-tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllTagsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Tags
+      tags:
+      - tag
+    post:
+      consumes:
+      - application/json
+      description: create tag
+      operationId: create-tag
+      parameters:
+      - description: Tag info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Tag'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Tag
+      tags:
+      - tag
+  /api/tag/:id:
+    delete:
+      consumes:
+      - application/json
+      description: delete tag
+      operationId: delete-tag
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Tag
+      tags:
+      - tag
+    get:
+      consumes:
+      - application/json
+      description: get tag by id
+      operationId: get-tag-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Tag'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Tag By Id
+      tags:
+      - tag
+    put:
+      consumes:
+      - application/json
+      description: update tag
+      operationId: update-tag
+      parameters:
+      - description: Tag info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Tag'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Tag
+      tags:
+      - tag
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: login
+      operationId: login
+      parameters:
+      - description: credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.signInPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      summary: SignIn
+      tags:
+      - auth
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: create account
+      operationId: create-account
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      summary: SignUp
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

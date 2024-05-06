@@ -9,6 +9,19 @@ import (
 	"github.com/lunovoy/friendly/internal/models"
 )
 
+// @Summary Create Friendlist
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description create friendlist
+// @ID create-friendlist
+// @Accept  json
+// @Produce  json
+// @Param input body models.UpdateFriendlist true "Friendlist info"
+// @Success 201 {string} uuid
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist [post]
 func (h *Handler) createFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -32,6 +45,18 @@ func (h *Handler) createFriendlist(c *gin.Context) {
 	})
 }
 
+// @Summary Get All Friendlists
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description get all friendlists
+// @ID get-all-friendlists
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllFriendlistsResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist [get]
 func (h *Handler) getAllFriendlists(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -45,11 +70,23 @@ func (h *Handler) getAllFriendlists(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"friendlists": friendlists,
+	c.JSON(http.StatusOK, getAllFriendlistsResponse{
+		Data: friendlists,
 	})
 }
 
+// @Summary Get All Friendlists Full
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description get all friendlists full
+// @ID get-all-friendlists-full
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllFriendlistsResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/full [get]
 func (h *Handler) getAllFriendlistsFull(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -77,12 +114,12 @@ func (h *Handler) getAllFriendlistsFull(c *gin.Context) {
 		return
 	}
 
-	type FriendsInFriendlist struct {
+	type friendsInFriendlist struct {
 		friendlistID uuid.UUID
 		friends      []models.FriendWorkInfoTags
 	}
 
-	friendsInFriendlists := make([]FriendsInFriendlist, 0, len(friendlistsWithTags))
+	friendsInFriendlists := make([]friendsInFriendlist, 0, len(friendlistsWithTags))
 
 	friendsWithTags := []models.FriendWorkInfoTags{}
 
@@ -96,7 +133,7 @@ func (h *Handler) getAllFriendlistsFull(c *gin.Context) {
 			}
 
 		}
-		friendsInFriendlists = append(friendsInFriendlists, FriendsInFriendlist{
+		friendsInFriendlists = append(friendsInFriendlists, friendsInFriendlist{
 			friendlistID: friendlist.Friendlist.ID,
 			friends:      friendsWithTags,
 		})
@@ -115,11 +152,23 @@ func (h *Handler) getAllFriendlistsFull(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"friendlists": friendlistFull,
+	c.JSON(http.StatusOK, getAllFriendlistsFullResponse{
+		Data: friendlistFull,
 	})
 }
 
+// @Summary Get Friendlist By Id
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description get friendlist by id
+// @ID get-friendlist-by-id
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Friendlist
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id [get]
 func (h *Handler) getFriendlistByID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -144,6 +193,18 @@ func (h *Handler) getFriendlistByID(c *gin.Context) {
 	})
 }
 
+// @Summary Get Friendlist Full By ID
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description get friendlist full by id
+// @ID get-friendlist-full-by-id
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.FriendlistFull
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id/full [get]
 func (h *Handler) getFriendlistByIDFull(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -187,6 +248,18 @@ func (h *Handler) getFriendlistByIDFull(c *gin.Context) {
 	})
 }
 
+// @Summary Get All Friendlists With Tags
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description get all friendlists with tags
+// @ID get-all-friendlists-with-tags
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllFriendlistsResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/tag [get]
 func (h *Handler) getAllFriendlistsWithTags(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -200,11 +273,23 @@ func (h *Handler) getAllFriendlistsWithTags(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"friendlists": friendlists,
+	c.JSON(http.StatusOK, getAllFriendlistsWithTagsResponse{
+		Data: friendlists,
 	})
 }
 
+// @Summary Get Friendlist By ID With Tags
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description get friendlist by id with tags
+// @ID get-friendlist-by-id-with-tags
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.FriendlistWithTags
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id/tag [get]
 func (h *Handler) getFriendlistByIDWithTags(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -229,6 +314,18 @@ func (h *Handler) getFriendlistByIDWithTags(c *gin.Context) {
 	})
 }
 
+// @Summary Get All Friendlists With Friends
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description get all friendlists with friends
+// @ID get-all-friendlists-with-friends
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllFriendlistsWithFriendsResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/friend [get]
 func (h *Handler) getAllFriendlistsWithFriends(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -242,11 +339,23 @@ func (h *Handler) getAllFriendlistsWithFriends(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"friendlists": friendlists,
+	c.JSON(http.StatusOK, getAllFriendlistsWithFriendsResponse{
+		Data: friendlists,
 	})
 }
 
+// @Summary Get Friendlist By ID With Friends
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description get friendlist by id with friends
+// @ID get-friendlist-by-id-with-friends
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.FriendlistWithFriends
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id/friend [get]
 func (h *Handler) getFriendlistByIDWithFriends(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -270,6 +379,8 @@ func (h *Handler) getFriendlistByIDWithFriends(c *gin.Context) {
 		"friendlist": friendlist,
 	})
 }
+
+// TODO: finish swagger docs
 
 func (h *Handler) updateFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)

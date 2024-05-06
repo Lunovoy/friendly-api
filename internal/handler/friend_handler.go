@@ -9,6 +9,19 @@ import (
 	"github.com/lunovoy/friendly/internal/models"
 )
 
+// @Summary Create Friend
+// @Security ApiKeyAuth
+// @Tags friend
+// @Description create friend
+// @ID create-friend
+// @Accept  json
+// @Produce  json
+// @Param input body models.UpdateFriendWorkInfoInput true "Friend info"
+// @Success 201 {object} any
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friend [post]
 func (h *Handler) createFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -33,6 +46,18 @@ func (h *Handler) createFriend(c *gin.Context) {
 	})
 }
 
+// @Summary Get All Friends
+// @Security ApiKeyAuth
+// @Tags friend
+// @Description get all friends
+// @ID get-all-friends
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllFriendsResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friend [get]
 func (h *Handler) getAllFriends(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -46,10 +71,23 @@ func (h *Handler) getAllFriends(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]any{
-		"friends": friends,
+	c.JSON(http.StatusOK, getAllFriendsResponse{
+		Data: friends,
 	})
 }
+
+// @Summary Get Friend By ID
+// @Security ApiKeyAuth
+// @Tags friend
+// @Description get friend by id
+// @ID get-friend-by-id
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.FriendWorkInfoTags
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friend/:id [get]
 func (h *Handler) getFriendByID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -74,6 +112,19 @@ func (h *Handler) getFriendByID(c *gin.Context) {
 	})
 }
 
+// @Summary Update Friend
+// @Security ApiKeyAuth
+// @Tags friend
+// @Description update friend
+// @ID update-friend
+// @Accept  json
+// @Produce  json
+// @Param input body models.UpdateFriendWorkInfoInput true "Friend info"
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friend/:id [put]
 func (h *Handler) updateFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -122,6 +173,18 @@ func (h *Handler) updateFriend(c *gin.Context) {
 	})
 }
 
+// @Summary Delete Friend
+// @Security ApiKeyAuth
+// @Tags friend
+// @Description delete friend
+// @ID delete-friend
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friend/:id [delete]
 func (h *Handler) deleteFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -162,6 +225,19 @@ func (h *Handler) deleteFriend(c *gin.Context) {
 	})
 }
 
+// @Summary Add Tag To Friend
+// @Security ApiKeyAuth
+// @Tags friend
+// @Description add tag to friend
+// @ID add-tag-to-friend
+// @Accept  json
+// @Produce  json
+// @Param input body models.AdditionTag true "Add Tag"
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friend/:id/tag [post]
 func (h *Handler) addTagToFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -204,6 +280,18 @@ func (h *Handler) addTagToFriend(c *gin.Context) {
 	)
 }
 
+// @Summary Delete Tag From Friend
+// @Security ApiKeyAuth
+// @Tags friend
+// @Description delete tag from friend
+// @ID delete-tag-from-friend
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friend/:id/tag/tag_id [delete]
 func (h *Handler) deleteTagFromFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {

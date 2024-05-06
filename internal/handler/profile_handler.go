@@ -8,6 +8,18 @@ import (
 	"github.com/lunovoy/friendly/internal/models"
 )
 
+// @Summary Get Profile
+// @Security ApiKeyAuth
+// @Tags profile
+// @Description get profile
+// @ID get-profile
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.User
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/profile/ [get]
 func (h *Handler) getProfile(c *gin.Context) {
 
 	userID, err := getUserIDFromCtx(c)
@@ -28,6 +40,20 @@ func (h *Handler) getProfile(c *gin.Context) {
 
 }
 
+// @Summary Update Profile
+// @Security ApiKeyAuth
+// @Tags profile
+// @Description update user profile
+// @ID update-profile
+// @Accept  json
+// @Produce  json
+// @Param input body models.UserUpdate true "User update payload"
+// @Success 200 {object} statusResponse "Successfully updated profile"
+// @Failure 400 {object} errorResponse "Bad request"
+// @Failure 404 {object} errorResponse "User not found"
+// @Failure 500 {object} errorResponse "Internal server error"
+// @Failure default {object} errorResponse
+// @Router /api/profile [put]
 func (h *Handler) updateProfile(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
