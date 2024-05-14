@@ -24,6 +24,10 @@ func (s *EventService) AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs []
 	return s.repo.AddFriendsToEvent(userID, eventID, friendIDs)
 }
 
+func (s *EventService) DeleteFriendsFromEvent(userID, eventID uuid.UUID, friendIDs []uuid.UUID) error {
+	return s.repo.DeleteFriendsFromEvent(userID, eventID, friendIDs)
+}
+
 func (s *EventService) GetEventsByFriendID(userID, friendID uuid.UUID) ([]models.Event, error) {
 	return s.repo.GetEventsByFriendID(userID, friendID)
 }

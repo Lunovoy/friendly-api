@@ -16,7 +16,7 @@ import (
 // @ID create-event
 // @Accept  json
 // @Produce  json
-// @Param input body models.Event true "Event info"
+// @Param input body models.EventWithFriendIDs true "Event info"
 // @Success 201 {string} uuid
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -30,25 +30,34 @@ func (h *Handler) createEvent(c *gin.Context) {
 		return
 	}
 
-	var payload models.Event
+	var payload models.EventWithFriendIDs
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	eventID, err := h.services.Event.Create(userID, payload)
+	eventID, err := h.services.Event.Create(userID, payload.Event)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	if payload.FriendIDs != nil && len(payload.FriendIDs) != 0 {
+		_, err = h.services.AddFriendsToEvent(userID, eventID, payload.FriendIDs)
+		if err != nil {
+			if delErr := h.services.Event.DeleteByID(userID, eventID); delErr != nil {
+                newErrorResponse(c, http.StatusInternalServerError, delErr.Error())
+            }
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
 	c.JSON(http.StatusCreated, map[string]any{
 		"event_id": eventID,
 	})
 
 }
-
-// TODO: add friends addition while creating event
-// add deletion friends from events
 
 func (h *Handler) addFriendsToEvent(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)

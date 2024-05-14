@@ -21,6 +21,11 @@ type EventWithFriends struct {
 	Friends []Friend `json:"friends"`
 }
 
+type EventWithFriendIDs struct {
+	Event   Event    `json:"event"`
+	FriendIDs []FriendID `json:"friend_ids"`
+}
+
 type EventUpdate struct {
 	Title       *string       `json:"title" db:"title" binding:"required"`
 	Description *string       `json:"description" db:"description"`

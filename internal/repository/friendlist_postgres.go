@@ -332,7 +332,7 @@ func (r *FriendlistPostgres) DeleteTagFromFriendlist(friendlistID, tagID uuid.UU
 		return errors.New("tag already removed from friendlist")
 	}
 
-	query := fmt.Sprintf("DELETE FROM %s where friendlist_id=$1 AND tag_id=$2", friendlistsTagsTable)
+	query := fmt.Sprintf("DELETE FROM %s WHERE friendlist_id=$1 AND tag_id=$2", friendlistsTagsTable)
 
 	_, err := r.db.Exec(query, friendlistID, tagID)
 	if err != nil {

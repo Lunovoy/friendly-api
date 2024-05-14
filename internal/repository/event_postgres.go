@@ -42,6 +42,11 @@ func (r *EventPostgres) Create(userID uuid.UUID, event models.Event) (uuid.UUID,
 }
 
 func (r *EventPostgres) AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs []models.FriendID) ([]uuid.UUID, error) {
+
+	if len(friendIDs) == 0 {
+		return nil, errors.New("empty friendIDs")
+	}
+
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return nil, err
@@ -70,6 +75,42 @@ func (r *EventPostgres) AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs [
 
 	err = tx.Commit()
 	return ids, err
+}
+
+func (r *EventPostgres) DeleteFriendsFromEvent(userID, eventID uuid.UUID, friendIDs []uuid.UUID) error {
+	var exists bool
+	queryCheck := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE event_id = $1 AND friend_id = $2)", friendsEventsTable)
+
+	checkStmt, err := r.db.Preparex(queryCheck)
+	if err != nil {
+		return err
+	}
+	defer checkStmt.Close()
+
+	for _, friendID := range friendIDs {
+		if err := checkStmt.Get(&exists, eventID, friendID); err != nil {
+			return err
+		}
+		if !exists {
+			return fmt.Errorf("friend %s already removed from event", friendID)
+		}
+	}
+
+	queryDelete := fmt.Sprintf("DELETE FROM %s WHERE event_id=$1 AND friend_id=$2", friendsEventsTable)
+
+	deleteStmt, err := r.db.Preparex(queryDelete)
+	if err != nil {
+		return  err
+	}
+
+	for _, friendID := range friendIDs {
+		_, err := deleteStmt.Exec(eventID, friendID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
 }
 
 func (r *EventPostgres) GetEventsByFriendID(userID, friendID uuid.UUID) ([]models.Event, error) {
