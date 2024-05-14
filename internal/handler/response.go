@@ -42,6 +42,10 @@ type getAllFriendlistsWithFriendsResponse struct {
 	Data []models.FriendlistWithFriends `json:"data"`
 }
 
+type getAllRemindersResponse struct {
+	Data []models.Reminder `json:"data"`
+}
+
 type statusResponse struct {
 	Status string
 }

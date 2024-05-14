@@ -87,9 +87,18 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			event.GET("/", h.getAllEvents)
 			event.GET("/:id", h.getEventByID)
 			event.GET("/friends", h.getAllEventsWithFriends)
-			event.GET("/:id/friends", h.getEventByIDWithFriends)
+			event.GET("/:id/full", h.getEventByIDFull)
 			event.PUT("/:id", h.updateEvent)
 			event.DELETE("/:id", h.deleteEvent)
+		}
+
+		reminder := api.Group("/reminder")
+		{
+			reminder.POST("/", h.createReminder)
+			reminder.GET("/", h.getAllReminders)
+			reminder.GET("/event/:event_id", h.getAllRemindersByEventID)
+			reminder.GET("/:id", h.getReminderByID)
+			reminder.DELETE("/:id", h.deleteReminder)
 		}
 
 		additionalInfoField := api.Group("/additional-field")

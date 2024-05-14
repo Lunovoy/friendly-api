@@ -380,8 +380,19 @@ func (h *Handler) getFriendlistByIDWithFriends(c *gin.Context) {
 	})
 }
 
-// TODO: finish swagger docs
-
+// @Summary Update Friendlist
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description update friendlist
+// @ID update-friendlist
+// @Accept  json
+// @Produce  json
+// @Param input body models.UpdateFriendlist true "Friendlist info"
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id [put]
 func (h *Handler) updateFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -433,6 +444,18 @@ func (h *Handler) updateFriendlist(c *gin.Context) {
 	})
 }
 
+// @Summary Delete Friendlist
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description delete friendlist
+// @ID delete-friendlist
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id [delete]
 func (h *Handler) deleteFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -473,6 +496,19 @@ func (h *Handler) deleteFriendlist(c *gin.Context) {
 	})
 }
 
+// @Summary Add Tag To Friendlist
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description add tag to friendlist
+// @ID add-tag-to-friendlist
+// @Accept  json
+// @Produce  json
+// @Param input body models.AdditionTag true "Add Tag"
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id/tag [post]
 func (h *Handler) addTagToFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -515,6 +551,19 @@ func (h *Handler) addTagToFriendlist(c *gin.Context) {
 	)
 }
 
+// @Summary Add Friend To Friendlist
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description add friend to friendlist
+// @ID add-friend-to-friendlist
+// @Accept  json
+// @Produce  json
+// @Param input body models.AdditionFriendToFriendlist true "Add Friend"
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id/friend [post]
 func (h *Handler) addFriendToFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -557,6 +606,18 @@ func (h *Handler) addFriendToFriendlist(c *gin.Context) {
 	)
 }
 
+// @Summary Delete Tag From Friendlist
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description delete tag from friendlist
+// @ID delete-tag-from-friendlist
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id/tag/tag_id [delete]
 func (h *Handler) deleteTagFromFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -593,6 +654,18 @@ func (h *Handler) deleteTagFromFriendlist(c *gin.Context) {
 	})
 }
 
+// @Summary Delete Friend From Friendlist
+// @Security ApiKeyAuth
+// @Tags friendlist
+// @Description delete friend from friendlist
+// @ID delete-friend-from-friendlist
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/friendlist/:id/friend/friend_id [delete]
 func (h *Handler) deleteFriendFromFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {

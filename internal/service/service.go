@@ -65,6 +65,15 @@ type Event interface {
 	DeleteByID(userID, eventID uuid.UUID) error
 }
 
+type Reminder interface {
+	Create(userID uuid.UUID, reminder models.Reminder) (uuid.UUID, error)
+	CreateBulk(userID uuid.UUID, reminders []models.Reminder) ([]uuid.UUID, error)
+	GetAll(userID uuid.UUID) ([]models.Reminder, error)
+	GetAllByEventID(userID, eventID uuid.UUID) ([]models.Reminder, error)
+	GetByID(userID, reminderID uuid.UUID) (models.Reminder, error)
+	DeleteByID(userID, reminderID uuid.UUID) error
+}
+
 type AdditionalInfoField interface {
 }
 
@@ -75,6 +84,7 @@ type Service struct {
 	Friendlist
 	Friend
 	Event
+	Reminder
 }
 
 func NewService(repo *repository.Repository) *Service {
@@ -85,5 +95,6 @@ func NewService(repo *repository.Repository) *Service {
 		Friendlist:    NewFriendlistService(repo.Friendlist),
 		Friend:        NewFriendService(repo.Friend),
 		Event:         NewEventService(repo.Event),
+		Reminder:      NewReminderService(repo.Reminder),
 	}
 }

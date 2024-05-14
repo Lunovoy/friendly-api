@@ -64,6 +64,15 @@ type Event interface {
 	DeleteByID(userID, eventID uuid.UUID) error
 }
 
+type Reminder interface {
+	Create(userID uuid.UUID, reminder models.Reminder) (uuid.UUID, error)
+	CreateBulk(userID uuid.UUID, reminders []models.Reminder) ([]uuid.UUID, error)
+	GetAll(userID uuid.UUID) ([]models.Reminder, error)
+	GetAllByEventID(userID, eventID uuid.UUID) ([]models.Reminder, error)
+	GetByID(userID, reminderID uuid.UUID) (models.Reminder, error)
+	DeleteByID(userID, reminderID uuid.UUID) error
+}
+
 type AdditionalInfoField interface {
 }
 
@@ -74,6 +83,7 @@ type Repository struct {
 	Friendlist
 	Friend
 	Event
+	Reminder
 }
 
 func NewRepository(db *sqlx.DB) *Repository {
@@ -84,5 +94,6 @@ func NewRepository(db *sqlx.DB) *Repository {
 		Friendlist:    NewFriendlistPostgres(db),
 		Friend:        NewFriendPostgres(db),
 		Event:         NewEventPostgres(db),
+		Reminder:      NewReminderPostgres(db),
 	}
 }

@@ -20,6 +20,7 @@ const (
 	additionalInfoFieldTextTable     = "additional_info_field_text"
 	eventTable                       = "event"
 	friendsEventsTable               = "friends_events"
+	reminderTable                    = "reminder"
 )
 
 type Config struct {

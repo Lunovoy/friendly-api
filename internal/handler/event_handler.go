@@ -16,7 +16,7 @@ import (
 // @ID create-event
 // @Accept  json
 // @Produce  json
-// @Param input body models.EventWithFriendIDs true "Event info with friends"
+// @Param input body models.EventWithFriendIDsAndReminders true "Event info with friends and reminders"
 // @Success 201 {string} uuid
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -30,7 +30,7 @@ func (h *Handler) createEvent(c *gin.Context) {
 		return
 	}
 
-	var payload models.EventWithFriendIDs
+	var payload models.EventWithFriendIDsAndReminders
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -42,12 +42,23 @@ func (h *Handler) createEvent(c *gin.Context) {
 		return
 	}
 
-	if payload.FriendIDs != nil && len(payload.FriendIDs) != 0 {
-		_, err = h.services.AddFriendsToEvent(userID, eventID, payload.FriendIDs)
+	if payload.Reminders != nil && len(payload.Reminders) != 0 {
+		_, err = h.services.Reminder.CreateBulk(userID, payload.Reminders)
 		if err != nil {
 			if delErr := h.services.Event.DeleteByID(userID, eventID); delErr != nil {
-                newErrorResponse(c, http.StatusInternalServerError, delErr.Error())
-            }
+				newErrorResponse(c, http.StatusInternalServerError, delErr.Error())
+			}
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
+	if payload.FriendIDs != nil && len(payload.FriendIDs) != 0 {
+		_, err = h.services.Event.AddFriendsToEvent(userID, eventID, payload.FriendIDs)
+		if err != nil {
+			if delErr := h.services.Event.DeleteByID(userID, eventID); delErr != nil {
+				newErrorResponse(c, http.StatusInternalServerError, delErr.Error())
+			}
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
@@ -224,19 +235,19 @@ func (h *Handler) getAllEventsWithFriends(c *gin.Context) {
 
 }
 
-// @Summary Get Event By Id With Friends
+// @Summary Get Event By Id With Friends And Reminders
 // @Security ApiKeyAuth
 // @Tags event
-// @Description get event by id with friends
-// @ID get-event-by-id-with-friends
+// @Description get event by id with friends and reminders
+// @ID get-event-by-id-with-friends-and-reminders
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} models.EventWithFriends
+// @Success 200 {object} models.EventWithFriendsAndReminders
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/event/:id/friends [get]
-func (h *Handler) getEventByIDWithFriends(c *gin.Context) {
+// @Router /api/event/:id/full [get]
+func (h *Handler) getEventByIDFull(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
@@ -249,14 +260,26 @@ func (h *Handler) getEventByIDWithFriends(c *gin.Context) {
 		return
 	}
 
-	event, err := h.services.Event.GetByIDWithFriends(userID, eventID)
+	eventWithFriends, err := h.services.Event.GetByIDWithFriends(userID, eventID)
 	if err != nil {
 		newErrorResponse(c, http.StatusNotFound, err.Error())
 		return
 	}
 
+	reminders, err := h.services.Reminder.GetAllByEventID(userID, eventID)
+	if err != nil {
+		newErrorResponse(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	eventFull := models.EventWithFriendsAndReminders{
+		Event:     eventWithFriends.Event,
+		Friends:   eventWithFriends.Friends,
+		Reminders: reminders,
+	}
+
 	c.JSON(http.StatusOK, map[string]any{
-		"event": event,
+		"event": eventFull,
 	})
 }
 
