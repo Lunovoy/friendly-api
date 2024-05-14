@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  github_com_lunovoy_friendly_internal_models.AdditionFriendToFriendlist:
+    properties:
+      friend_id:
+        type: string
+    required:
+    - friend_id
+    type: object
   github_com_lunovoy_friendly_internal_models.AdditionTag:
     properties:
       tag_id:
@@ -39,6 +46,19 @@ definitions:
     required:
     - title
     type: object
+  github_com_lunovoy_friendly_internal_models.EventWithFriendIDsAndReminders:
+    properties:
+      event:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Event'
+      friend_ids:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendID'
+        type: array
+      reminders:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Reminder'
+        type: array
+    type: object
   github_com_lunovoy_friendly_internal_models.EventWithFriends:
     properties:
       event:
@@ -46,6 +66,19 @@ definitions:
       friends:
         items:
           $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Friend'
+        type: array
+    type: object
+  github_com_lunovoy_friendly_internal_models.EventWithFriendsAndReminders:
+    properties:
+      event:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Event'
+      friends:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Friend'
+        type: array
+      reminders:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Reminder'
         type: array
     type: object
   github_com_lunovoy_friendly_internal_models.Friend:
@@ -61,6 +94,11 @@ definitions:
       last_name:
         type: string
       user_id:
+        type: string
+    type: object
+  github_com_lunovoy_friendly_internal_models.FriendID:
+    properties:
+      friend_id:
         type: string
     type: object
   github_com_lunovoy_friendly_internal_models.FriendWorkInfoTags:
@@ -115,6 +153,17 @@ definitions:
         items:
           $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Tag'
         type: array
+    type: object
+  github_com_lunovoy_friendly_internal_models.Reminder:
+    properties:
+      event_id:
+        type: string
+      id:
+        type: string
+      minutes_until_event:
+        type: integer
+      user_id:
+        type: string
     type: object
   github_com_lunovoy_friendly_internal_models.Tag:
     properties:
@@ -289,6 +338,13 @@ definitions:
           $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendWorkInfoTags'
         type: array
     type: object
+  internal_handler.getAllRemindersResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Reminder'
+        type: array
+    type: object
   internal_handler.getAllTagsResponse:
     properties:
       data:
@@ -366,12 +422,12 @@ paths:
       description: create event
       operationId: create-event
       parameters:
-      - description: Event info
+      - description: Event info with friends and reminders
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Event'
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithFriendIDsAndReminders'
       produces:
       - application/json
       responses:
@@ -541,19 +597,19 @@ paths:
       summary: Update Event
       tags:
       - event
-  /api/event/:id/friends:
+  /api/event/:id/full:
     get:
       consumes:
       - application/json
-      description: get event by id with friends
-      operationId: get-event-by-id-with-friends
+      description: get event by id with friends and reminders
+      operationId: get-event-by-id-with-friends-and-reminders
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithFriends'
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithFriendsAndReminders'
         "400":
           description: Bad Request
           schema:
@@ -572,7 +628,7 @@ paths:
             $ref: '#/definitions/internal_handler.errorResponse'
       security:
       - ApiKeyAuth: []
-      summary: Get Event By Id With Friends
+      summary: Get Event By Id With Friends And Reminders
       tags:
       - event
   /api/event/friends:
@@ -940,6 +996,39 @@ paths:
       tags:
       - friendlist
   /api/friendlist/:id:
+    delete:
+      consumes:
+      - application/json
+      description: delete friendlist
+      operationId: delete-friendlist
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Friendlist
+      tags:
+      - friendlist
     get:
       consumes:
       - application/json
@@ -971,6 +1060,46 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get Friendlist By Id
+      tags:
+      - friendlist
+    put:
+      consumes:
+      - application/json
+      description: update friendlist
+      operationId: update-friendlist
+      parameters:
+      - description: Friendlist info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendlist'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Friendlist
       tags:
       - friendlist
   /api/friendlist/:id/friend:
@@ -1005,6 +1134,80 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get Friendlist By ID With Friends
+      tags:
+      - friendlist
+    post:
+      consumes:
+      - application/json
+      description: add friend to friendlist
+      operationId: add-friend-to-friendlist
+      parameters:
+      - description: Add Friend
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.AdditionFriendToFriendlist'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Add Friend To Friendlist
+      tags:
+      - friendlist
+  /api/friendlist/:id/friend/friend_id:
+    delete:
+      consumes:
+      - application/json
+      description: delete friend from friendlist
+      operationId: delete-friend-from-friendlist
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Friend From Friendlist
       tags:
       - friendlist
   /api/friendlist/:id/full:
@@ -1073,6 +1276,80 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get Friendlist By ID With Tags
+      tags:
+      - friendlist
+    post:
+      consumes:
+      - application/json
+      description: add tag to friendlist
+      operationId: add-tag-to-friendlist
+      parameters:
+      - description: Add Tag
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.AdditionTag'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Add Tag To Friendlist
+      tags:
+      - friendlist
+  /api/friendlist/:id/tag/tag_id:
+    delete:
+      consumes:
+      - application/json
+      description: delete tag from friendlist
+      operationId: delete-tag-from-friendlist
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Tag From Friendlist
       tags:
       - friendlist
   /api/friendlist/friend:
@@ -1371,6 +1648,141 @@ paths:
       summary: Get Profile
       tags:
       - profile
+  /api/reminder:
+    get:
+      consumes:
+      - application/json
+      description: get all reminders
+      operationId: get-all-reminders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllRemindersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Reminders
+      tags:
+      - reminder
+  /api/reminder/:id:
+    delete:
+      consumes:
+      - application/json
+      description: delete reminder
+      operationId: delete-reminder
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Reminder
+      tags:
+      - reminder
+    get:
+      consumes:
+      - application/json
+      description: get reminder by id
+      operationId: get-reminder-by-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Reminder'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Reminder By Id
+      tags:
+      - reminder
+  /api/reminder/event/:event_id:
+    get:
+      consumes:
+      - application/json
+      description: get all reminders by event id
+      operationId: get-all-reminders-by-event-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllRemindersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Reminders By Event Id
+      tags:
+      - reminder
   /api/tag:
     get:
       consumes:
