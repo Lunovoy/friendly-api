@@ -16,7 +16,7 @@ import (
 // @ID create-event
 // @Accept  json
 // @Produce  json
-// @Param input body models.EventWithFriendIDs true "Event info"
+// @Param input body models.EventWithFriendIDs true "Event info with friends"
 // @Success 201 {string} uuid
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
