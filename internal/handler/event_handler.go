@@ -43,7 +43,7 @@ func (h *Handler) createEvent(c *gin.Context) {
 	}
 
 	if payload.Reminders != nil && len(payload.Reminders) != 0 {
-		_, err = h.services.Reminder.CreateBulk(userID, payload.Reminders)
+		_, err = h.services.Reminder.CreateBulk(userID, eventID, payload.Reminders)
 		if err != nil {
 			if delErr := h.services.Event.DeleteByID(userID, eventID); delErr != nil {
 				newErrorResponse(c, http.StatusInternalServerError, delErr.Error())

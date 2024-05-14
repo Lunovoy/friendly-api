@@ -20,8 +20,8 @@ func (s *ReminderService) Create(userID uuid.UUID, reminder models.Reminder) (uu
 	return s.repo.Create(userID, reminder)
 }
 
-func (s *ReminderService) CreateBulk(userID uuid.UUID, reminders []models.Reminder) ([]uuid.UUID, error) {
-	return s.repo.CreateBulk(userID, reminders)
+func (s *ReminderService) CreateBulk(userID, eventID uuid.UUID, reminders []models.Reminder) ([]uuid.UUID, error) {
+	return s.repo.CreateBulk(userID, eventID, reminders)
 }
 
 func (s *ReminderService) GetAll(userID uuid.UUID) ([]models.Reminder, error) {

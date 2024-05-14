@@ -66,7 +66,7 @@ type Event interface {
 
 type Reminder interface {
 	Create(userID uuid.UUID, reminder models.Reminder) (uuid.UUID, error)
-	CreateBulk(userID uuid.UUID, reminders []models.Reminder) ([]uuid.UUID, error)
+	CreateBulk(userID, eventID uuid.UUID, reminders []models.Reminder) ([]uuid.UUID, error)
 	GetAll(userID uuid.UUID) ([]models.Reminder, error)
 	GetAllByEventID(userID, eventID uuid.UUID) ([]models.Reminder, error)
 	GetByID(userID, reminderID uuid.UUID) (models.Reminder, error)

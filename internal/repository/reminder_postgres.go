@@ -30,7 +30,7 @@ func (r *ReminderPostgres) Create(userID uuid.UUID, reminder models.Reminder) (u
 	return reminderID, nil
 }
 
-func (r *ReminderPostgres) CreateBulk(userID uuid.UUID, reminders []models.Reminder) ([]uuid.UUID, error) {
+func (r *ReminderPostgres) CreateBulk(userID, eventID uuid.UUID, reminders []models.Reminder) ([]uuid.UUID, error) {
 
 	query := fmt.Sprintf("INSERT INTO \"%s\" (minutes_until_event, event_id, user_id) VALUES ($1, $2, $3) RETURNING id", reminderTable)
 	stmt, err := r.db.Prepare(query)
@@ -41,7 +41,7 @@ func (r *ReminderPostgres) CreateBulk(userID uuid.UUID, reminders []models.Remin
 	var reminderID *uuid.UUID
 	var reminderIDs []uuid.UUID
 	for _, reminder := range reminders {
-		row := stmt.QueryRow(reminder.MinutesUntilEvent, reminder.EventID, userID)
+		row := stmt.QueryRow(reminder.MinutesUntilEvent, eventID, userID)
 		if err := row.Scan(&reminderID); err != nil {
 			return nil, err
 		}
