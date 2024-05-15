@@ -2627,14 +2627,17 @@ const docTemplate = `{
                 "end_date": {
                     "$ref": "#/definitions/sql.NullTime"
                 },
+                "frequency": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "start_date": {
                     "$ref": "#/definitions/sql.NullTime"
-                },
-                "start_notify_sent": {
-                    "type": "boolean"
                 },
                 "title": {
                     "type": "string"
@@ -2655,6 +2658,9 @@ const docTemplate = `{
                 },
                 "end_date": {
                     "$ref": "#/definitions/sql.NullTime"
+                },
+                "frequency": {
+                    "type": "string"
                 },
                 "start_date": {
                     "$ref": "#/definitions/sql.NullTime"
