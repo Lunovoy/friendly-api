@@ -16,6 +16,21 @@ func NewEventService(repo repository.Event) *EventService {
 	}
 }
 
+// TODO: finish
+func (s *EventService) validFrequency(frequency string) {
+
+	frequencies := map[string]bool{
+		"once":        true,
+		"everyday":    true,
+		"weekdays":    true, //будние
+		"weekly":      true, //еженедельно (через 7 дней)
+		"monthlyDate": true, // ежемесячно (в эту же дату)
+		"monthlyDay":  true, //ежемесячно (в 4й вторник к примеру)
+		"annually":    true, //ежегодно
+
+	}
+}
+
 func (s *EventService) Create(userID uuid.UUID, event models.Event) (uuid.UUID, error) {
 	return s.repo.Create(userID, event)
 }

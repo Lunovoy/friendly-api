@@ -1,10 +1,11 @@
 CREATE TABLE IF NOT EXISTS "event" (
     "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     "title" varchar(50) unique not null,
-    "description" varchar(100),
+    "description" text,
     "start_date" timestamp with time zone,
     "end_date" timestamp with time zone,
-    "start_notify_sent" boolean DEFAULT false,
+    "frequency" varchar(50) not null,
+    "is_active" boolean DEFAULT true,
     "user_id" UUID not null,
     FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
 );

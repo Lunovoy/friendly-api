@@ -29,9 +29,9 @@ func (r *EventPostgres) Create(userID uuid.UUID, event models.Event) (uuid.UUID,
 	defer tx.Rollback()
 
 	var eventID uuid.UUID
-	query := fmt.Sprintf("INSERT INTO \"%s\" (title, description, start_date, end_date, user_id) VALUES ($1, $2, $3, $4, $5) RETURNING id", eventTable)
+	query := fmt.Sprintf("INSERT INTO \"%s\" (title, description, start_date, end_date, frequency, user_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id", eventTable)
 
-	row := tx.QueryRow(query, event.Title, event.Description, event.StartDate, event.EndDate, userID)
+	row := tx.QueryRow(query, event.Title, event.Description, event.StartDate, event.EndDate, event.Frequency, userID)
 	if err := row.Scan(&eventID); err != nil {
 		return uuid.Nil, err
 	}
@@ -100,7 +100,7 @@ func (r *EventPostgres) DeleteFriendsFromEvent(userID, eventID uuid.UUID, friend
 
 	deleteStmt, err := r.db.Preparex(queryDelete)
 	if err != nil {
-		return  err
+		return err
 	}
 
 	for _, friendID := range friendIDs {
@@ -264,6 +264,9 @@ func (r *EventPostgres) Update(userID, eventID uuid.UUID, event models.EventUpda
 	}
 	if event.EndDate != nil {
 		eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("end_date", *event.EndDate))
+	}
+	if event.Frequency != nil {
+		eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("frequency", *event.Frequency))
 	}
 
 	builderEvent.Set(eventFieldsWithValues...)

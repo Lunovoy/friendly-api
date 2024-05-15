@@ -7,13 +7,14 @@ import (
 )
 
 type Event struct {
-	ID              uuid.UUID    `json:"id" db:"id"`
-	Title           string       `json:"title" db:"title" binding:"required"`
-	Description     string       `json:"description" db:"description"`
-	StartDate       sql.NullTime `json:"start_date" db:"start_date"`
-	EndDate         sql.NullTime `json:"end_date" db:"end_date"`
-	StartNotifySent bool         `json:"start_notify_sent" db:"start_notify_sent"`
-	UserID          uuid.UUID    `json:"user_id" db:"user_id"`
+	ID          uuid.UUID    `json:"id" db:"id"`
+	Title       string       `json:"title" db:"title" binding:"required"`
+	Description string       `json:"description" db:"description"`
+	StartDate   sql.NullTime `json:"start_date" db:"start_date"`
+	EndDate     sql.NullTime `json:"end_date" db:"end_date"`
+	Frequency   string       `json:"frequency" db:"frequency"`
+	IsActive    bool         `json:"is_active" db:"is_active"`
+	UserID      uuid.UUID    `json:"user_id" db:"user_id"`
 }
 
 type EventWithFriends struct {
@@ -43,6 +44,7 @@ type EventUpdate struct {
 	Description *string       `json:"description" db:"description"`
 	StartDate   *sql.NullTime `json:"start_date" db:"start_date"`
 	EndDate     *sql.NullTime `json:"end_date" db:"end_date"`
+	Frequency   *string       `json:"frequency" db:"frequency"`
 }
 
 type FriendsEvents struct {
