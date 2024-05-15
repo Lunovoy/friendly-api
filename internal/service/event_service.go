@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/google/uuid"
 	"github.com/lunovoy/friendly/internal/models"
 	"github.com/lunovoy/friendly/internal/repository"
@@ -16,22 +18,27 @@ func NewEventService(repo repository.Event) *EventService {
 	}
 }
 
-// TODO: finish
-func (s *EventService) validFrequency(frequency string) {
+var frequencies = map[string]bool{
+	"once":        true,
+	"everyday":    true,
+	"weekdays":    true, //будние
+	"weekly":      true, //еженедельно (через 7 дней)
+	"monthlyDate": true, // ежемесячно (в эту же дату)
+	"monthlyDay":  true, //ежемесячно (в 4й вторник к примеру)
+	"annually":    true, //ежегодно
+}
 
-	frequencies := map[string]bool{
-		"once":        true,
-		"everyday":    true,
-		"weekdays":    true, //будние
-		"weekly":      true, //еженедельно (через 7 дней)
-		"monthlyDate": true, // ежемесячно (в эту же дату)
-		"monthlyDay":  true, //ежемесячно (в 4й вторник к примеру)
-		"annually":    true, //ежегодно
-
+func (s *EventService) isFrequencyValid(frequency string) bool {
+	if _, ok := frequencies[frequency]; !ok {
+		return false
 	}
+	return true
 }
 
 func (s *EventService) Create(userID uuid.UUID, event models.Event) (uuid.UUID, error) {
+	if !s.isFrequencyValid(event.Frequency) {
+		return uuid.Nil, errors.New("frequency is not valid")
+	}
 	return s.repo.Create(userID, event)
 }
 
@@ -64,6 +71,9 @@ func (s *EventService) GetByIDWithFriends(userID, eventID uuid.UUID) (models.Eve
 }
 
 func (s *EventService) Update(userID, eventID uuid.UUID, event models.EventUpdate) error {
+	if !s.isFrequencyValid(*event.Frequency) {
+		return errors.New("frequency is not valid")
+	}
 	return s.repo.Update(userID, eventID, event)
 }
 
