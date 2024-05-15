@@ -68,7 +68,7 @@ func (r *ReminderPostgres) GetAllByEventID(userID, eventID uuid.UUID) ([]models.
 
 	var reminders []models.Reminder
 
-	query := fmt.Sprintf("SELECT * FROM %s WHERE event_id = $1, user_id = $2", reminderTable)
+	query := fmt.Sprintf("SELECT * FROM %s WHERE event_id = $1 AND user_id = $2", reminderTable)
 
 	err := r.db.Select(&reminders, query, eventID, userID)
 
