@@ -99,7 +99,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			reminder.GET("/", h.getAllReminders)
 			reminder.GET("/event/:event_id", h.getAllRemindersByEventID)
 			reminder.GET("/:id", h.getReminderByID)
-			reminder.POST("/:id", h.updateReminder)
+			reminder.PUT("/:id", h.updateReminder)
 			reminder.DELETE("/:id", h.deleteReminder)
 		}
 
