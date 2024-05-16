@@ -1,0 +1,1 @@
+import{j as s}from"./index-DP60Imk7.js";import{F as t}from"./FriendsList-BuS_v7NP.js";import{u as o}from"./useTranslation-DRoIjre2.js";import"./chunk-26CMBM6O-BGC_v7OB.js";const m=()=>{const{t:r}=o();return s.jsxs("div",{children:[r("Главная страница"),s.jsx(t,{})]})};export{m as default};

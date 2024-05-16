@@ -1,0 +1,10 @@
+{
+  "Повтор": "Repeating",
+  "once": "Once",
+  "everyday": "Every day",
+  "weekdays": "Week days",
+  "weekly": "Weekly",
+  "monthlyDate": "Monthly (в эту же дату)",
+  "monthlyDay": "Montly (каждый 3-ий вторник)",
+  "annually": "Yearly"
+}

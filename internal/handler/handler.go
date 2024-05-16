@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/lunovoy/friendly/internal/service"
 	swaggerfiles "github.com/swaggo/files"
@@ -24,6 +26,7 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
+	router.NoRoute(gin.WrapH(http.FileServer(gin.Dir("./", false))))
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	auth := router.Group("/auth")
@@ -119,5 +122,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			image.DELETE("/:id", h.deleteImage)
 		}
 	}
+
 	return router
 }
