@@ -85,6 +85,14 @@ func (r *ReminderPostgres) GetByID(userID, reminderID uuid.UUID) (models.Reminde
 	return reminder, err
 }
 
+func (r *ReminderPostgres) Update(userID, reminderID uuid.UUID, reminder models.ReminderUpdate) error {
+	query := fmt.Sprintf("UPDATE %s SET minutes_until_event = $1 WHERE id = $2 AND user_id = $3", reminderTable)
+
+	_, err := r.db.Exec(query, reminder.MinutesUntilEvent, reminderID, userID)
+
+	return err
+}
+
 func (r *ReminderPostgres) DeleteByID(userID, reminderID uuid.UUID) error {
 	query := fmt.Sprintf("DELETE FROM %s WHERE id=$1 AND user_id=$2", reminderID)
 

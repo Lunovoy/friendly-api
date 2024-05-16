@@ -70,6 +70,7 @@ type Reminder interface {
 	GetAll(userID uuid.UUID) ([]models.Reminder, error)
 	GetAllByEventID(userID, eventID uuid.UUID) ([]models.Reminder, error)
 	GetByID(userID, reminderID uuid.UUID) (models.Reminder, error)
+	Update(userID, reminderID uuid.UUID, reminder models.ReminderUpdate) error
 	DeleteByID(userID, reminderID uuid.UUID) error
 }
 

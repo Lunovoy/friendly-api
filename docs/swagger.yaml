@@ -1794,6 +1794,39 @@ paths:
       summary: Get Reminder By Id
       tags:
       - reminder
+    put:
+      consumes:
+      - application/json
+      description: update reminder
+      operationId: update-reminder
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Reminder
+      tags:
+      - reminder
   /api/reminder/event/:event_id:
     get:
       consumes:

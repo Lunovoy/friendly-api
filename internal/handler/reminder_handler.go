@@ -150,6 +150,55 @@ func (h *Handler) getReminderByID(c *gin.Context) {
 	})
 }
 
+// @Summary Update Reminder
+// @Security ApiKeyAuth
+// @Tags reminder
+// @Description update reminder
+// @ID update-reminder
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} statusResponse
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/reminder/:id [put]
+func (h *Handler) updateReminder(c *gin.Context) {
+	userID, err := getUserIDFromCtx(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
+		return
+	}
+
+	reminderID, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "invalid id param")
+		return
+	}
+
+	var payload models.ReminderUpdate
+	if err := c.BindJSON(&payload); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	_, err = h.services.Reminder.GetByID(userID, reminderID)
+	if err != nil {
+		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("reminder not found: %s", err.Error()))
+		return
+	}
+
+	err = h.services.Reminder.Update(userID, reminderID, payload)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, statusResponse{
+		Status: "ok",
+	})
+
+}
+
 // @Summary Delete Reminder
 // @Security ApiKeyAuth
 // @Tags reminder

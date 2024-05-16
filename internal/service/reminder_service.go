@@ -36,6 +36,10 @@ func (s *ReminderService) GetByID(userID, reminderID uuid.UUID) (models.Reminder
 	return s.repo.GetByID(userID, reminderID)
 }
 
+func (s *ReminderService) Update(userID, reminderID uuid.UUID, reminder models.ReminderUpdate) error {
+	return s.repo.Update(userID, reminderID, reminder)
+}
+
 func (s *ReminderService) DeleteByID(userID, reminderID uuid.UUID) error {
 	return s.repo.DeleteByID(userID, reminderID)
 }
