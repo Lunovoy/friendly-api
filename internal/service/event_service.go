@@ -79,7 +79,7 @@ func (s *EventService) Update(userID, eventID uuid.UUID, event models.EventUpdat
 	return s.repo.Update(userID, eventID, event)
 }
 
-func (s *EventService) UpdateWithReminders(userID, eventID uuid.UUID, event models.EventWithRemindersUpdate) error {
+func (s *EventService) UpdateFull(userID, eventID uuid.UUID, event models.EventFullUpdate) error {
 	if event.EventUpdate != nil {
 		if event.EventUpdate.Frequency != nil {
 			if !s.isFrequencyValid(*event.EventUpdate.Frequency) {
@@ -87,7 +87,7 @@ func (s *EventService) UpdateWithReminders(userID, eventID uuid.UUID, event mode
 			}
 		}
 	}
-	return s.repo.UpdateWithReminders(userID, eventID, event)
+	return s.repo.UpdateFull(userID, eventID, event)
 }
 
 func (s *EventService) DeleteByID(userID, eventID uuid.UUID) error {

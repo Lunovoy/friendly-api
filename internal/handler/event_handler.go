@@ -112,7 +112,7 @@ func (h *Handler) addFriendsToEvent(c *gin.Context) {
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/event//friend/:friend_id [get]
+// @Router /api/event/friend/:friend_id [get]
 func (h *Handler) getEventsByFriendID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -343,12 +343,13 @@ func (h *Handler) getAllEventsFull(c *gin.Context) {
 // @ID update-event
 // @Accept  json
 // @Produce  json
-// @Param input body models.EventWithRemindersUpdate true "Event info with reminders"
+// @Param id path uuid true "Event ID"
+// @Param input body models.EventFullUpdate true "Event info with reminders"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/event/:id [put]
+// @Router /api/event/{id} [put]
 func (h *Handler) updateEvent(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -362,7 +363,7 @@ func (h *Handler) updateEvent(c *gin.Context) {
 		return
 	}
 
-	var payload models.EventWithRemindersUpdate
+	var payload models.EventFullUpdate
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -374,7 +375,7 @@ func (h *Handler) updateEvent(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Event.UpdateWithReminders(userID, eventID, payload)
+	err = h.services.Event.UpdateFull(userID, eventID, payload)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

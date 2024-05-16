@@ -35,6 +35,19 @@ definitions:
     required:
     - title
     type: object
+  github_com_lunovoy_friendly_internal_models.EventFullUpdate:
+    properties:
+      event:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventUpdate'
+      friend_ids:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendID'
+        type: array
+      reminders:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.ReminderWithIDUpdate'
+        type: array
+    type: object
   github_com_lunovoy_friendly_internal_models.EventUpdate:
     properties:
       description:
@@ -83,15 +96,6 @@ definitions:
       reminders:
         items:
           $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Reminder'
-        type: array
-    type: object
-  github_com_lunovoy_friendly_internal_models.EventWithRemindersUpdate:
-    properties:
-      event:
-        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventUpdate'
-      reminders:
-        items:
-          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.ReminderWithIDUpdate'
         type: array
     type: object
   github_com_lunovoy_friendly_internal_models.Friend:
@@ -402,7 +406,7 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
-host: 80.78.243.140
+host: localhost:8080
 info:
   contact: {}
   description: API Server for Friendly Application
@@ -483,40 +487,6 @@ paths:
       summary: Create Event
       tags:
       - event
-  /api/event//friend/:friend_id:
-    get:
-      consumes:
-      - application/json
-      description: get event by friend id
-      operationId: get-event-by-friend-id
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/internal_handler.getAllEventsResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Get Event By Friend ID
-      tags:
-      - event
   /api/event/:id:
     delete:
       consumes:
@@ -584,46 +554,6 @@ paths:
       summary: Get Event By Id
       tags:
       - event
-    put:
-      consumes:
-      - application/json
-      description: update event
-      operationId: update-event
-      parameters:
-      - description: Event info with reminders
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithRemindersUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/internal_handler.statusResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Update Event
-      tags:
-      - event
   /api/event/:id/full:
     get:
       consumes:
@@ -656,6 +586,81 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get Event By Id With Friends And Reminders
+      tags:
+      - event
+  /api/event/{id}:
+    put:
+      consumes:
+      - application/json
+      description: update event
+      operationId: update-event
+      parameters:
+      - description: Event info with reminders
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventFullUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.statusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Event
+      tags:
+      - event
+  /api/event/friend/:friend_id:
+    get:
+      consumes:
+      - application/json
+      description: get event by friend id
+      operationId: get-event-by-friend-id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllEventsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Event By Friend ID
       tags:
       - event
   /api/event/friends:
@@ -1741,6 +1746,46 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get All Reminders
+      tags:
+      - reminder
+    post:
+      consumes:
+      - application/json
+      description: create reminder
+      operationId: create-reminder
+      parameters:
+      - description: Reminder info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Reminder'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Reminder
       tags:
       - reminder
   /api/reminder/:id:

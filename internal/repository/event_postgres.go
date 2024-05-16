@@ -280,7 +280,7 @@ func (r *EventPostgres) Update(userID, eventID uuid.UUID, event models.EventUpda
 	return err
 }
 
-func (r *EventPostgres) UpdateWithReminders(userID, eventID uuid.UUID, event models.EventWithRemindersUpdate) error {
+func (r *EventPostgres) UpdateFull(userID, eventID uuid.UUID, event models.EventFullUpdate) error {
 	tx, err := r.db.Beginx()
 	if err != nil {
 		return err
@@ -320,6 +320,23 @@ func (r *EventPostgres) UpdateWithReminders(userID, eventID uuid.UUID, event mod
 		_, err := tx.Exec(queryEvent, args...)
 		if err != nil {
 			return err
+		}
+	}
+
+	if event.FriendIDs != nil {
+		queryDelete := fmt.Sprintf("DELETE FROM %s WHERE event_id = $1", friendsEventsTable)
+		_, err := tx.Exec(queryDelete, eventID)
+		if err != nil {
+			return fmt.Errorf("error deleting old friends from event: %s", err.Error())
+		}
+
+		var friendsIDs []models.FriendID
+		for _, friendID := range event.FriendIDs {
+			friendsIDs = append(friendsIDs, *friendID)
+		}
+		_, err = r.AddFriendsToEvent(userID, eventID, friendsIDs)
+		if err != nil {
+			return fmt.Errorf("error adding new friends to event: %s", err.Error())
 		}
 	}
 

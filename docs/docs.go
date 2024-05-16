@@ -130,59 +130,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/event//friend/:friend_id": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "get event by friend id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "event"
-                ],
-                "summary": "Get Event By Friend ID",
-                "operationId": "get-event-by-friend-id",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.getAllEventsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.errorResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/event/:id": {
             "get": {
                 "security": [
@@ -207,68 +154,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.Event"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.errorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.errorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.errorResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.errorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "update event",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "event"
-                ],
-                "summary": "Update Event",
-                "operationId": "update-event",
-                "parameters": [
-                    {
-                        "description": "Event info with reminders",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.EventWithRemindersUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/internal_handler.statusResponse"
                         }
                     },
                     "400": {
@@ -402,6 +287,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/event/friend/:friend_id": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get event by friend id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "event"
+                ],
+                "summary": "Get Event By Friend ID",
+                "operationId": "get-event-by-friend-id",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.getAllEventsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/event/friends": {
             "get": {
                 "security": [
@@ -479,6 +417,70 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/internal_handler.getAllEventsFullInfo"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/event/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "update event",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "event"
+                ],
+                "summary": "Update Event",
+                "operationId": "update-event",
+                "parameters": [
+                    {
+                        "description": "Event info with reminders",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.EventFullUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.statusResponse"
                         }
                     },
                     "400": {
@@ -2086,6 +2088,68 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "create reminder",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "reminder"
+                ],
+                "summary": "Create Reminder",
+                "operationId": "create-reminder",
+                "parameters": [
+                    {
+                        "description": "Reminder info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.Reminder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/internal_handler.errorResponse"
+                        }
+                    }
+                }
             }
         },
         "/api/reminder/:id": {
@@ -2751,6 +2815,26 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_lunovoy_friendly_internal_models.EventFullUpdate": {
+            "type": "object",
+            "properties": {
+                "event": {
+                    "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.EventUpdate"
+                },
+                "friend_ids": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.FriendID"
+                    }
+                },
+                "reminders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.ReminderWithIDUpdate"
+                    }
+                }
+            }
+        },
         "github_com_lunovoy_friendly_internal_models.EventUpdate": {
             "type": "object",
             "required": [
@@ -2824,20 +2908,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.Reminder"
-                    }
-                }
-            }
-        },
-        "github_com_lunovoy_friendly_internal_models.EventWithRemindersUpdate": {
-            "type": "object",
-            "properties": {
-                "event": {
-                    "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.EventUpdate"
-                },
-                "reminders": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.ReminderWithIDUpdate"
                     }
                 }
             }
@@ -3330,7 +3400,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "80.78.243.140",
+	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Friendly app API",

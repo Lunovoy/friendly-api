@@ -21,7 +21,7 @@ import (
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/tag [post]
+// @Router /api/reminder [post]
 func (h *Handler) createReminder(c *gin.Context) {
 
 	userID, err := getUserIDFromCtx(c)
