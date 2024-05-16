@@ -14,6 +14,10 @@ type getAllEventsResponse struct {
 	Data []models.Event `json:"data"`
 }
 
+type getAllEventsFullInfo struct {
+	Data []*models.EventWithFriendsAndReminders `json:"data"`
+}
+
 type getAllEventsWithFriendsResponse struct {
 	Data []models.EventWithFriends `json:"data"`
 }

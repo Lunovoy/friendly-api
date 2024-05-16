@@ -283,6 +283,59 @@ func (h *Handler) getEventByIDFull(c *gin.Context) {
 	})
 }
 
+// @Summary Get All Events Full Info
+// @Security ApiKeyAuth
+// @Tags event
+// @Description get all events full info
+// @ID get-all-events-full-info
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} getAllEventsFullInfo
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event/full [get]
+func (h *Handler) getAllEventsFull(c *gin.Context) {
+	userID, err := getUserIDFromCtx(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "user id from ctx not found")
+		return
+	}
+
+	eventsWithFriends, err := h.services.Event.GetAllWithFriends(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	reminders, err := h.services.Reminder.GetAll(userID)
+	if err != nil {
+		newErrorResponse(c, http.StatusNotFound, err.Error())
+		return
+	}
+
+	var eventsFull []*models.EventWithFriendsAndReminders
+
+	var eventReminders []models.Reminder
+	for _, eventWithFriends := range eventsWithFriends {
+		for _, reminder := range reminders {
+			if reminder.EventID == eventWithFriends.Event.ID {
+				eventReminders = append(eventReminders, reminder)
+			}
+		}
+		eventsFull = append(eventsFull, &models.EventWithFriendsAndReminders{
+			Event:     eventWithFriends.Event,
+			Friends:   eventWithFriends.Friends,
+			Reminders: eventReminders,
+		})
+		eventReminders = nil
+	}
+
+	c.JSON(http.StatusOK, getAllEventsFullInfo{
+		Data: eventsFull,
+	})
+}
+
 // @Summary Update Event
 // @Security ApiKeyAuth
 // @Tags event

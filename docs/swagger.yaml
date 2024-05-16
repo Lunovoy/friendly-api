@@ -307,6 +307,13 @@ definitions:
       message:
         type: string
     type: object
+  internal_handler.getAllEventsFullInfo:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithFriendsAndReminders'
+        type: array
+    type: object
   internal_handler.getAllEventsResponse:
     properties:
       data:
@@ -667,6 +674,40 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get All Events With Friends
+      tags:
+      - event
+  /api/event/full:
+    get:
+      consumes:
+      - application/json
+      description: get all events full info
+      operationId: get-all-events-full-info
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.getAllEventsFullInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Events Full Info
       tags:
       - event
   /api/friend:
