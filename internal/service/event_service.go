@@ -71,10 +71,21 @@ func (s *EventService) GetByIDWithFriends(userID, eventID uuid.UUID) (models.Eve
 }
 
 func (s *EventService) Update(userID, eventID uuid.UUID, event models.EventUpdate) error {
-	if !s.isFrequencyValid(*event.Frequency) {
-		return errors.New("frequency is not valid")
+	if event.Frequency != nil {
+		if !s.isFrequencyValid(*event.Frequency) {
+			return errors.New("frequency is not valid")
+		}
 	}
 	return s.repo.Update(userID, eventID, event)
+}
+
+func (s *EventService) UpdateWithReminders(userID, eventID uuid.UUID, event models.EventWithRemindersUpdate) error {
+	if event.EventUpdate.Frequency != nil {
+		if !s.isFrequencyValid(*event.EventUpdate.Frequency) {
+			return errors.New("frequency is not valid")
+		}
+	}
+	return s.repo.UpdateWithReminders(userID, eventID, event)
 }
 
 func (s *EventService) DeleteByID(userID, eventID uuid.UUID) error {

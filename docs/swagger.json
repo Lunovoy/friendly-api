@@ -249,12 +249,12 @@
                 "operationId": "update-event",
                 "parameters": [
                     {
-                        "description": "Event info",
+                        "description": "Event info with reminders",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.EventUpdate"
+                            "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.EventWithRemindersUpdate"
                         }
                     }
                 ],
@@ -2822,6 +2822,20 @@
                 }
             }
         },
+        "github_com_lunovoy_friendly_internal_models.EventWithRemindersUpdate": {
+            "type": "object",
+            "properties": {
+                "event": {
+                    "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.EventUpdate"
+                },
+                "reminders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.ReminderWithIDUpdate"
+                    }
+                }
+            }
+        },
         "github_com_lunovoy_friendly_internal_models.Friend": {
             "type": "object",
             "properties": {
@@ -2949,6 +2963,17 @@
                 },
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "github_com_lunovoy_friendly_internal_models.ReminderWithIDUpdate": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "minutes_until_event": {
+                    "type": "integer"
                 }
             }
         },

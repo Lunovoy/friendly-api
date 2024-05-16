@@ -343,7 +343,7 @@ func (h *Handler) getAllEventsFull(c *gin.Context) {
 // @ID update-event
 // @Accept  json
 // @Produce  json
-// @Param input body models.EventUpdate true "Event info"
+// @Param input body models.EventWithRemindersUpdate true "Event info with reminders"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -362,7 +362,7 @@ func (h *Handler) updateEvent(c *gin.Context) {
 		return
 	}
 
-	var payload models.EventUpdate
+	var payload models.EventWithRemindersUpdate
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -374,7 +374,7 @@ func (h *Handler) updateEvent(c *gin.Context) {
 		return
 	}
 
-	err = h.services.Event.Update(userID, eventID, payload)
+	err = h.services.Event.UpdateWithReminders(userID, eventID, payload)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

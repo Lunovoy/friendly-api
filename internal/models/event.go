@@ -52,3 +52,8 @@ type FriendsEvents struct {
 	FriendID uuid.UUID `json:"friend_id" db:"friend_id"`
 	EventID  uuid.UUID `json:"event_id" db:"event_id"`
 }
+
+type EventWithRemindersUpdate struct {
+	EventUpdate    *EventUpdate            `json:"event"`
+	ReminderUpdate []*ReminderWithIDUpdate `json:"reminders"`
+}

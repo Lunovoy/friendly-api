@@ -85,6 +85,15 @@ definitions:
           $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Reminder'
         type: array
     type: object
+  github_com_lunovoy_friendly_internal_models.EventWithRemindersUpdate:
+    properties:
+      event:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventUpdate'
+      reminders:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.ReminderWithIDUpdate'
+        type: array
+    type: object
   github_com_lunovoy_friendly_internal_models.Friend:
     properties:
       dob:
@@ -168,6 +177,13 @@ definitions:
         type: integer
       user_id:
         type: string
+    type: object
+  github_com_lunovoy_friendly_internal_models.ReminderWithIDUpdate:
+    properties:
+      id:
+        type: string
+      minutes_until_event:
+        type: integer
     type: object
   github_com_lunovoy_friendly_internal_models.Tag:
     properties:
@@ -574,12 +590,12 @@ paths:
       description: update event
       operationId: update-event
       parameters:
-      - description: Event info
+      - description: Event info with reminders
         in: body
         name: input
         required: true
         schema:
-          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventUpdate'
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithRemindersUpdate'
       produces:
       - application/json
       responses:

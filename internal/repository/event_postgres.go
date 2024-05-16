@@ -271,9 +271,76 @@ func (r *EventPostgres) Update(userID, eventID uuid.UUID, event models.EventUpda
 
 	builderEvent.Set(eventFieldsWithValues...)
 
-	queryFriend, args := builderEvent.Build()
-	_, err := r.db.Exec(queryFriend, args...)
+	queryEvent, args := builderEvent.Build()
+	_, err := r.db.Exec(queryEvent, args...)
 	if err != nil {
+		return err
+	}
+
+	return err
+}
+
+func (r *EventPostgres) UpdateWithReminders(userID, eventID uuid.UUID, event models.EventWithRemindersUpdate) error {
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	if event.EventUpdate != nil {
+
+		eventFieldsWithValues := []string{}
+		builderEvent := sqlbuilder.NewUpdateBuilder()
+		builderEvent.SetFlavor(sqlbuilder.PostgreSQL)
+		builderEvent.Update(eventTable)
+		builderEvent.Where(
+			builderEvent.Equal("id", eventID),
+			builderEvent.Equal("user_id", userID),
+		)
+
+		if event.EventUpdate.Title != nil {
+			eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("title", *event.EventUpdate.Title))
+		}
+		if event.EventUpdate.Description != nil {
+			eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("description", *event.EventUpdate.Description))
+		}
+		if event.EventUpdate.StartDate != nil {
+			eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("start_date", *event.EventUpdate.StartDate))
+		}
+		if event.EventUpdate.EndDate != nil {
+			eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("end_date", *event.EventUpdate.EndDate))
+		}
+		if event.EventUpdate.Frequency != nil {
+			eventFieldsWithValues = append(eventFieldsWithValues, builderEvent.Assign("frequency", *event.EventUpdate.Frequency))
+		}
+
+		builderEvent.Set(eventFieldsWithValues...)
+
+		queryEvent, args := builderEvent.Build()
+		_, err := tx.Exec(queryEvent, args...)
+		if err != nil {
+			return err
+		}
+	}
+
+	if event.ReminderUpdate != nil {
+		queryReminder := fmt.Sprintf("UPDATE %s SET minutes_until_event = $1 WHERE id = $2", reminderTable)
+		reminderStmt, err := tx.Preparex(queryReminder)
+		if err != nil {
+			return err
+		}
+		defer reminderStmt.Close()
+
+		for _, reminder := range event.ReminderUpdate {
+			_, err := reminderStmt.Exec(*reminder.MinutesUntilEvent, *reminder.ID)
+			if err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if err := tx.Commit(); err != nil {
 		return err
 	}
 

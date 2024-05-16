@@ -61,6 +61,7 @@ type Event interface {
 	GetAllWithFriends(userID uuid.UUID) ([]models.EventWithFriends, error)
 	GetByIDWithFriends(userID, eventID uuid.UUID) (models.EventWithFriends, error)
 	Update(userID, eventID uuid.UUID, event models.EventUpdate) error
+	UpdateWithReminders(userID, eventID uuid.UUID, event models.EventWithRemindersUpdate) error
 	DeleteByID(userID, eventID uuid.UUID) error
 }
 
