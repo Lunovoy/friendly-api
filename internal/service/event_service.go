@@ -80,9 +80,11 @@ func (s *EventService) Update(userID, eventID uuid.UUID, event models.EventUpdat
 }
 
 func (s *EventService) UpdateWithReminders(userID, eventID uuid.UUID, event models.EventWithRemindersUpdate) error {
-	if event.EventUpdate.Frequency != nil {
-		if !s.isFrequencyValid(*event.EventUpdate.Frequency) {
-			return errors.New("frequency is not valid")
+	if event.EventUpdate != nil {
+		if event.EventUpdate.Frequency != nil {
+			if !s.isFrequencyValid(*event.EventUpdate.Frequency) {
+				return errors.New("frequency is not valid")
+			}
 		}
 	}
 	return s.repo.UpdateWithReminders(userID, eventID, event)
