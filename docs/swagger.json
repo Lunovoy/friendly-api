@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "80.78.243.140",
     "basePath": "/",
     "paths": {
         "/api/event": {
@@ -3027,6 +3027,9 @@
                 },
                 "id": {
                     "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
                 },
                 "minutes_until_event": {
                     "type": "integer"

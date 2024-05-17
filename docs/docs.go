@@ -3034,6 +3034,9 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "is_active": {
+                    "type": "boolean"
+                },
                 "minutes_until_event": {
                     "type": "integer"
                 },
@@ -3400,7 +3403,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "80.78.243.140",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Friendly app API",

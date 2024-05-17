@@ -177,6 +177,8 @@ definitions:
         type: string
       id:
         type: string
+      is_active:
+        type: boolean
       minutes_until_event:
         type: integer
       user_id:
@@ -406,7 +408,7 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
-host: localhost:8080
+host: 80.78.243.140
 info:
   contact: {}
   description: API Server for Friendly Application
