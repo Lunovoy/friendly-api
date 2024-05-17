@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS "reminder" DROP COLUMN IF EXISTS "is_active";
