@@ -294,8 +294,6 @@ definitions:
         type: string
       username:
         type: string
-    required:
-    - mail
     type: object
   github_com_lunovoy_friendly_internal_models.WorkInfo:
     properties:
@@ -348,6 +346,13 @@ definitions:
       data:
         items:
           $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithFriends'
+        type: array
+    type: object
+  internal_handler.getAllFriendlistsFullResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendlistFull'
         type: array
     type: object
   internal_handler.getAllFriendlistsResponse:
@@ -489,12 +494,18 @@ paths:
       summary: Create Event
       tags:
       - event
-  /api/event/:id:
+  /api/event/{id}:
     delete:
       consumes:
       - application/json
       description: delete event
       operationId: delete-event
+      parameters:
+      - description: Event id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -528,6 +539,12 @@ paths:
       - application/json
       description: get event by id
       operationId: get-event-by-id
+      parameters:
+      - description: Event id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -556,47 +573,17 @@ paths:
       summary: Get Event By Id
       tags:
       - event
-  /api/event/:id/full:
-    get:
-      consumes:
-      - application/json
-      description: get event by id with friends and reminders
-      operationId: get-event-by-id-with-friends-and-reminders
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithFriendsAndReminders'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-      security:
-      - ApiKeyAuth: []
-      summary: Get Event By Id With Friends And Reminders
-      tags:
-      - event
-  /api/event/{id}:
     put:
       consumes:
       - application/json
       description: update event
       operationId: update-event
       parameters:
+      - description: Event id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Event info with reminders
         in: body
         name: input
@@ -631,12 +618,106 @@ paths:
       summary: Update Event
       tags:
       - event
-  /api/event/friend/:friend_id:
+  /api/event/{id}/friends:
+    post:
+      consumes:
+      - application/json
+      description: add friend to event
+      operationId: add-friends-to-event
+      parameters:
+      - description: Event id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Friends id
+        in: body
+        name: input
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendID'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Add Friends To Event
+      tags:
+      - event
+  /api/event/{id}/full:
+    get:
+      consumes:
+      - application/json
+      description: get event by id with friends and reminders
+      operationId: get-event-by-id-with-friends-and-reminders
+      parameters:
+      - description: Event id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.EventWithFriendsAndReminders'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Event By Id With Friends And Reminders
+      tags:
+      - event
+  /api/event/friend/{friend_id}:
     get:
       consumes:
       - application/json
       description: get event by friend id
       operationId: get-event-by-friend-id
+      parameters:
+      - description: Friend id
+        in: path
+        name: friend_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -807,12 +888,18 @@ paths:
       summary: Create Friend
       tags:
       - friend
-  /api/friend/:id:
+  /api/friend/{id}:
     delete:
       consumes:
       - application/json
       description: delete friend
       operationId: delete-friend
+      parameters:
+      - description: Friend id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -846,6 +933,12 @@ paths:
       - application/json
       description: get friend by id
       operationId: get-friend-by-id
+      parameters:
+      - description: Friend id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -880,6 +973,11 @@ paths:
       description: update friend
       operationId: update-friend
       parameters:
+      - description: Friend id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Friend info
         in: body
         name: input
@@ -914,13 +1012,18 @@ paths:
       summary: Update Friend
       tags:
       - friend
-  /api/friend/:id/tag:
+  /api/friend/{id}/tag:
     post:
       consumes:
       - application/json
       description: add tag to friend
       operationId: add-tag-to-friend
       parameters:
+      - description: Friend id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Add Tag
         in: body
         name: input
@@ -955,12 +1058,23 @@ paths:
       summary: Add Tag To Friend
       tags:
       - friend
-  /api/friend/:id/tag/tag_id:
+  /api/friend/{id}/tag/{tag_id}:
     delete:
       consumes:
       - application/json
       description: delete tag from friend
       operationId: delete-tag-from-friend
+      parameters:
+      - description: Friend id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Tag id
+        in: path
+        name: tag_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1063,12 +1177,18 @@ paths:
       summary: Create Friendlist
       tags:
       - friendlist
-  /api/friendlist/:id:
+  /api/friendlist/{id}:
     delete:
       consumes:
       - application/json
       description: delete friendlist
       operationId: delete-friendlist
+      parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1102,6 +1222,12 @@ paths:
       - application/json
       description: get friendlist by id
       operationId: get-friendlist-by-id
+      parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1136,6 +1262,11 @@ paths:
       description: update friendlist
       operationId: update-friendlist
       parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Friendlist info
         in: body
         name: input
@@ -1170,12 +1301,18 @@ paths:
       summary: Update Friendlist
       tags:
       - friendlist
-  /api/friendlist/:id/friend:
+  /api/friendlist/{id}/friend:
     get:
       consumes:
       - application/json
       description: get friendlist by id with friends
       operationId: get-friendlist-by-id-with-friends
+      parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1210,6 +1347,11 @@ paths:
       description: add friend to friendlist
       operationId: add-friend-to-friendlist
       parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Add Friend
         in: body
         name: input
@@ -1244,12 +1386,23 @@ paths:
       summary: Add Friend To Friendlist
       tags:
       - friendlist
-  /api/friendlist/:id/friend/friend_id:
+  /api/friendlist/{id}/friend/{friend_id}:
     delete:
       consumes:
       - application/json
       description: delete friend from friendlist
       operationId: delete-friend-from-friendlist
+      parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Friend id
+        in: path
+        name: friend_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1278,12 +1431,18 @@ paths:
       summary: Delete Friend From Friendlist
       tags:
       - friendlist
-  /api/friendlist/:id/full:
+  /api/friendlist/{id}/full:
     get:
       consumes:
       - application/json
       description: get friendlist full by id
       operationId: get-friendlist-full-by-id
+      parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1312,12 +1471,18 @@ paths:
       summary: Get Friendlist Full By ID
       tags:
       - friendlist
-  /api/friendlist/:id/tag:
+  /api/friendlist/{id}/tag:
     get:
       consumes:
       - application/json
       description: get friendlist by id with tags
       operationId: get-friendlist-by-id-with-tags
+      parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1352,6 +1517,11 @@ paths:
       description: add tag to friendlist
       operationId: add-tag-to-friendlist
       parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Add Tag
         in: body
         name: input
@@ -1386,12 +1556,23 @@ paths:
       summary: Add Tag To Friendlist
       tags:
       - friendlist
-  /api/friendlist/:id/tag/tag_id:
+  /api/friendlist/{id}/tag/{tag_id}:
     delete:
       consumes:
       - application/json
       description: delete tag from friendlist
       operationId: delete-tag-from-friendlist
+      parameters:
+      - description: Friendlist id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Tag id
+        in: path
+        name: tag_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1466,7 +1647,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_handler.getAllFriendlistsResponse'
+            $ref: '#/definitions/internal_handler.getAllFriendlistsFullResponse'
         "400":
           description: Bad Request
           schema:
@@ -1595,7 +1776,7 @@ paths:
       summary: Delete Image
       tags:
       - image
-  /api/image/:id/:res:
+  /api/image/{id}/{res}:
     get:
       consumes:
       - application/json
@@ -1790,12 +1971,18 @@ paths:
       summary: Create Reminder
       tags:
       - reminder
-  /api/reminder/:id:
+  /api/reminder/{id}:
     delete:
       consumes:
       - application/json
       description: delete reminder
       operationId: delete-reminder
+      parameters:
+      - description: Reminder id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1829,6 +2016,12 @@ paths:
       - application/json
       description: get reminder by id
       operationId: get-reminder-by-id
+      parameters:
+      - description: Reminder id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1862,6 +2055,12 @@ paths:
       - application/json
       description: update reminder
       operationId: update-reminder
+      parameters:
+      - description: Reminder id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1890,12 +2089,18 @@ paths:
       summary: Update Reminder
       tags:
       - reminder
-  /api/reminder/event/:event_id:
+  /api/reminder/event/{event_id}:
     get:
       consumes:
       - application/json
       description: get all reminders by event id
       operationId: get-all-reminders-by-event-id
+      parameters:
+      - description: Event id
+        in: path
+        name: event_id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1998,12 +2203,18 @@ paths:
       summary: Create Tag
       tags:
       - tag
-  /api/tag/:id:
+  /api/tag/{id}:
     delete:
       consumes:
       - application/json
       description: delete tag
       operationId: delete-tag
+      parameters:
+      - description: Tag id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -2037,6 +2248,12 @@ paths:
       - application/json
       description: get tag by id
       operationId: get-tag-by-id
+      parameters:
+      - description: Tag id
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -2071,6 +2288,11 @@ paths:
       description: update tag
       operationId: update-tag
       parameters:
+      - description: Tag id
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Tag info
         in: body
         name: input

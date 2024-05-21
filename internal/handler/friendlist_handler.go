@@ -82,7 +82,7 @@ func (h *Handler) getAllFriendlists(c *gin.Context) {
 // @ID get-all-friendlists-full
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} getAllFriendlistsResponse
+// @Success 200 {object} getAllFriendlistsFullResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
@@ -164,11 +164,12 @@ func (h *Handler) getAllFriendlistsFull(c *gin.Context) {
 // @ID get-friendlist-by-id
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
 // @Success 200 {object} models.Friendlist
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id [get]
+// @Router /api/friendlist/{id} [get]
 func (h *Handler) getFriendlistByID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -200,11 +201,12 @@ func (h *Handler) getFriendlistByID(c *gin.Context) {
 // @ID get-friendlist-full-by-id
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
 // @Success 200 {object} models.FriendlistFull
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id/full [get]
+// @Router /api/friendlist/{id}/full [get]
 func (h *Handler) getFriendlistByIDFull(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -285,11 +287,12 @@ func (h *Handler) getAllFriendlistsWithTags(c *gin.Context) {
 // @ID get-friendlist-by-id-with-tags
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
 // @Success 200 {object} models.FriendlistWithTags
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id/tag [get]
+// @Router /api/friendlist/{id}/tag [get]
 func (h *Handler) getFriendlistByIDWithTags(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -351,11 +354,12 @@ func (h *Handler) getAllFriendlistsWithFriends(c *gin.Context) {
 // @ID get-friendlist-by-id-with-friends
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
 // @Success 200 {object} models.FriendlistWithFriends
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id/friend [get]
+// @Router /api/friendlist/{id}/friend [get]
 func (h *Handler) getFriendlistByIDWithFriends(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -387,12 +391,13 @@ func (h *Handler) getFriendlistByIDWithFriends(c *gin.Context) {
 // @ID update-friendlist
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
 // @Param input body models.UpdateFriendlist true "Friendlist info"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id [put]
+// @Router /api/friendlist/{id} [put]
 func (h *Handler) updateFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -451,11 +456,12 @@ func (h *Handler) updateFriendlist(c *gin.Context) {
 // @ID delete-friendlist
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id [delete]
+// @Router /api/friendlist/{id} [delete]
 func (h *Handler) deleteFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -503,12 +509,13 @@ func (h *Handler) deleteFriendlist(c *gin.Context) {
 // @ID add-tag-to-friendlist
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
 // @Param input body models.AdditionTag true "Add Tag"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id/tag [post]
+// @Router /api/friendlist/{id}/tag [post]
 func (h *Handler) addTagToFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -558,12 +565,13 @@ func (h *Handler) addTagToFriendlist(c *gin.Context) {
 // @ID add-friend-to-friendlist
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
 // @Param input body models.AdditionFriendToFriendlist true "Add Friend"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id/friend [post]
+// @Router /api/friendlist/{id}/friend [post]
 func (h *Handler) addFriendToFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -613,11 +621,13 @@ func (h *Handler) addFriendToFriendlist(c *gin.Context) {
 // @ID delete-tag-from-friendlist
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
+// @Param tag_id path string true "Tag id"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id/tag/tag_id [delete]
+// @Router /api/friendlist/{id}/tag/{tag_id} [delete]
 func (h *Handler) deleteTagFromFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -661,11 +671,13 @@ func (h *Handler) deleteTagFromFriendlist(c *gin.Context) {
 // @ID delete-friend-from-friendlist
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friendlist id"
+// @Param friend_id path string true "Friend id"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friendlist/:id/friend/friend_id [delete]
+// @Router /api/friendlist/{id}/friend/{friend_id} [delete]
 func (h *Handler) deleteFriendFromFriendlist(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {

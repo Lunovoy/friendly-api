@@ -85,11 +85,12 @@ func (h *Handler) getAllTags(c *gin.Context) {
 // @ID get-tag-by-id
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Tag id"
 // @Success 200 {object} models.Tag
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/tag/:id [get]
+// @Router /api/tag/{id} [get]
 func (h *Handler) getTagByID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -121,12 +122,13 @@ func (h *Handler) getTagByID(c *gin.Context) {
 // @ID update-tag
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Tag id"
 // @Param input body models.Tag true "Tag info"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/tag/:id [put]
+// @Router /api/tag/{id} [put]
 func (h *Handler) updateTag(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -170,11 +172,12 @@ func (h *Handler) updateTag(c *gin.Context) {
 // @ID delete-tag
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Tag id"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/tag/:id [delete]
+// @Router /api/tag/{id} [delete]
 func (h *Handler) deleteTag(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {

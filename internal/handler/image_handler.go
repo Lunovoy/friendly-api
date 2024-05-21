@@ -92,7 +92,7 @@ func (h *Handler) uploadImage(c *gin.Context) {
 // @Failure 404 {object} errorResponse "Image not found"
 // @Failure 500 {object} errorResponse "Internal server error"
 // @Failure default {object} errorResponse
-// @Router /api/image/:id/:res [get]
+// @Router /api/image/{id}/{res} [get]
 func (h *Handler) getImage(c *gin.Context) {
 	imageID := c.Param("id")
 	resolutionString := c.Param("res")

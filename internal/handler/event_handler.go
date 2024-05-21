@@ -70,6 +70,20 @@ func (h *Handler) createEvent(c *gin.Context) {
 
 }
 
+// @Summary Add Friends To Event
+// @Security ApiKeyAuth
+// @Tags event
+// @Description add friend to event
+// @ID add-friends-to-event
+// @Accept  json
+// @Produce  json
+// @Param id path string true "Event id"
+// @Param input body []models.FriendID true "Friends id"
+// @Success 200 {object} any
+// @Failure 400,404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Failure default {object} errorResponse
+// @Router /api/event/{id}/friends [post]
 func (h *Handler) addFriendsToEvent(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -108,11 +122,12 @@ func (h *Handler) addFriendsToEvent(c *gin.Context) {
 // @ID get-event-by-friend-id
 // @Accept  json
 // @Produce  json
+// @Param friend_id path string true "Friend id"
 // @Success 200 {object} getAllEventsResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/event/friend/:friend_id [get]
+// @Router /api/event/friend/{friend_id} [get]
 func (h *Handler) getEventsByFriendID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -175,11 +190,12 @@ func (h *Handler) getAllEvents(c *gin.Context) {
 // @ID get-event-by-id
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Event id"
 // @Success 200 {object} models.Event
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/event/:id [get]
+// @Router /api/event/{id} [get]
 func (h *Handler) getEventByID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -242,11 +258,12 @@ func (h *Handler) getAllEventsWithFriends(c *gin.Context) {
 // @ID get-event-by-id-with-friends-and-reminders
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Event id"
 // @Success 200 {object} models.EventWithFriendsAndReminders
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/event/:id/full [get]
+// @Router /api/event/{id}/full [get]
 func (h *Handler) getEventByIDFull(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -343,7 +360,7 @@ func (h *Handler) getAllEventsFull(c *gin.Context) {
 // @ID update-event
 // @Accept  json
 // @Produce  json
-// @Param id path uuid true "Event ID"
+// @Param id path string true "Event id"
 // @Param input body models.EventFullUpdate true "Event info with reminders"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
@@ -393,11 +410,12 @@ func (h *Handler) updateEvent(c *gin.Context) {
 // @ID delete-event
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Event id"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/event/:id [delete]
+// @Router /api/event/{id} [delete]
 func (h *Handler) deleteEvent(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {

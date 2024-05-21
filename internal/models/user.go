@@ -21,5 +21,5 @@ type UserUpdate struct {
 	LastName   string    `json:"last_name" db:"last_name"`
 	MiddleName string    `json:"middle_name" db:"middle_name"`
 	TgUsername string    `json:"tg_username" db:"tg_username"`
-	Mail       string    `json:"mail" binding:"required" db:"mail"`
+	Mail       string    `json:"mail" db:"mail"`
 }

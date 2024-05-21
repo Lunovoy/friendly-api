@@ -83,11 +83,12 @@ func (h *Handler) getAllFriends(c *gin.Context) {
 // @ID get-friend-by-id
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friend id"
 // @Success 200 {object} models.FriendWorkInfoTags
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friend/:id [get]
+// @Router /api/friend/{id} [get]
 func (h *Handler) getFriendByID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -119,12 +120,13 @@ func (h *Handler) getFriendByID(c *gin.Context) {
 // @ID update-friend
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friend id"
 // @Param input body models.UpdateFriendWorkInfoInput true "Friend info"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friend/:id [put]
+// @Router /api/friend/{id} [put]
 func (h *Handler) updateFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -180,11 +182,12 @@ func (h *Handler) updateFriend(c *gin.Context) {
 // @ID delete-friend
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friend id"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friend/:id [delete]
+// @Router /api/friend/{id} [delete]
 func (h *Handler) deleteFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -232,12 +235,13 @@ func (h *Handler) deleteFriend(c *gin.Context) {
 // @ID add-tag-to-friend
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friend id"
 // @Param input body models.AdditionTag true "Add Tag"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friend/:id/tag [post]
+// @Router /api/friend/{id}/tag [post]
 func (h *Handler) addTagToFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -287,11 +291,13 @@ func (h *Handler) addTagToFriend(c *gin.Context) {
 // @ID delete-tag-from-friend
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Friend id"
+// @Param tag_id path string true "Tag id"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/friend/:id/tag/tag_id [delete]
+// @Router /api/friend/{id}/tag/{tag_id} [delete]
 func (h *Handler) deleteTagFromFriend(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {

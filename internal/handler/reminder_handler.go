@@ -85,11 +85,12 @@ func (h *Handler) getAllReminders(c *gin.Context) {
 // @ID get-all-reminders-by-event-id
 // @Accept  json
 // @Produce  json
+// @Param event_id path string true "Event id"
 // @Success 200 {object} getAllRemindersResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/reminder/event/:event_id [get]
+// @Router /api/reminder/event/{event_id} [get]
 func (h *Handler) getAllRemindersByEventID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -121,11 +122,12 @@ func (h *Handler) getAllRemindersByEventID(c *gin.Context) {
 // @ID get-reminder-by-id
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Reminder id"
 // @Success 200 {object} models.Reminder
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/reminder/:id [get]
+// @Router /api/reminder/{id} [get]
 func (h *Handler) getReminderByID(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -157,11 +159,12 @@ func (h *Handler) getReminderByID(c *gin.Context) {
 // @ID update-reminder
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Reminder id"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/reminder/:id [put]
+// @Router /api/reminder/{id} [put]
 func (h *Handler) updateReminder(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
@@ -206,11 +209,12 @@ func (h *Handler) updateReminder(c *gin.Context) {
 // @ID delete-reminder
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Reminder id"
 // @Success 200 {object} statusResponse
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /api/reminder/:id [delete]
+// @Router /api/reminder/{id} [delete]
 func (h *Handler) deleteReminder(c *gin.Context) {
 	userID, err := getUserIDFromCtx(c)
 	if err != nil {
