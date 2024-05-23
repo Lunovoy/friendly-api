@@ -34,7 +34,7 @@ func (r *TagPostgres) Create(userID uuid.UUID, tag models.Tag) (uuid.UUID, error
 	}
 
 	var existsTag models.Tag
-	queryCheck = fmt.Sprintf("SELECT * FROM %s WHERE title = $1 AND user_id = $2)", tagTable)
+	queryCheck = fmt.Sprintf("SELECT * FROM %s WHERE title = $1 AND user_id = $2", tagTable)
 	if err := tx.Get(&existsTag, queryCheck, tag.Title, userID); err != nil {
 		return uuid.Nil, err
 	}
