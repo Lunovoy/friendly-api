@@ -702,7 +702,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoInput"
+                            "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoTagsInput"
                         }
                     }
                 ],
@@ -3427,6 +3427,17 @@ const docTemplate = `{
             }
         },
         "github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoInput": {
+            "type": "object",
+            "properties": {
+                "friend": {
+                    "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendInput"
+                },
+                "work_info": {
+                    "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.UpdateWorkInfoInput"
+                }
+            }
+        },
+        "github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoTagsInput": {
             "type": "object",
             "properties": {
                 "friend": {

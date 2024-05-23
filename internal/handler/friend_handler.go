@@ -16,7 +16,7 @@ import (
 // @ID create-friend
 // @Accept  json
 // @Produce  json
-// @Param input body models.UpdateFriendWorkInfoInput true "Friend info"
+// @Param input body models.UpdateFriendWorkInfoTagsInput true "Friend info"
 // @Success 201 {object} any
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -29,13 +29,18 @@ func (h *Handler) createFriend(c *gin.Context) {
 		return
 	}
 
-	var payload models.UpdateFriendWorkInfoInput
+	var payload models.UpdateFriendWorkInfoTagsInput
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	friendIDWorkID, err := h.services.Friend.Create(userID, payload)
+	friendPayload := models.UpdateFriendWorkInfoInput{
+		Friend:   payload.Friend,
+		WorkInfo: payload.WorkInfo,
+	}
+
+	friendIDWorkID, err := h.services.Friend.Create(userID, friendPayload)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

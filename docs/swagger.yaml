@@ -226,6 +226,13 @@ definitions:
     properties:
       friend:
         $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendInput'
+      work_info:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateWorkInfoInput'
+    type: object
+  github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoTagsInput:
+    properties:
+      friend:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendInput'
       tag_ids:
         items:
           $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.AdditionTag'
@@ -872,7 +879,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoInput'
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendWorkInfoTagsInput'
       produces:
       - application/json
       responses:
