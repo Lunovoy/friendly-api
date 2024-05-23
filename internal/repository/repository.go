@@ -35,6 +35,7 @@ type Friendlist interface {
 	GetByIDWithFriends(userID, friendlistID uuid.UUID) (models.FriendlistWithFriends, error)
 	Update(userID, friendlistID uuid.UUID, friendlist models.UpdateFriendlist) error
 	AddTagToFriendlist(friendlistID, tagID uuid.UUID) error
+	AddTagsToFriendlist(userID, friendlistID uuid.UUID, tagIDs []models.AdditionTag) ([]uuid.UUID, error)
 	DeleteTagFromFriendlist(friendlistID, tagID uuid.UUID) error
 	AddFriendToFriendlist(friendlistID, friendID uuid.UUID) error
 	DeleteFriendFromFriendlist(friendlistID, friendID uuid.UUID) error
@@ -48,6 +49,7 @@ type Friend interface {
 	Update(userID, friendID uuid.UUID, friend models.UpdateFriendWorkInfoInput) error
 	DeleteByID(userID, friendID uuid.UUID) error
 	AddTagToFriend(friendID, tagID uuid.UUID) error
+	AddTagsToFriend(userID, friendID uuid.UUID, tagIDs []models.AdditionTag) ([]uuid.UUID, error)
 	DeleteTagFromFriend(friendID, tagID uuid.UUID) error
 }
 

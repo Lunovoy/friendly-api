@@ -1148,7 +1148,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendlist"
+                            "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.FriendlistWithTagsUpdate"
                         }
                     }
                 ],
@@ -3347,6 +3347,20 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_lunovoy_friendly_internal_models.FriendlistWithTagsUpdate": {
+            "type": "object",
+            "properties": {
+                "friendlist": {
+                    "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendlist"
+                },
+                "tag_ids": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.AdditionTag"
+                    }
+                }
+            }
+        },
         "github_com_lunovoy_friendly_internal_models.Reminder": {
             "type": "object",
             "properties": {
@@ -3417,6 +3431,12 @@ const docTemplate = `{
             "properties": {
                 "friend": {
                     "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendInput"
+                },
+                "tag_ids": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.AdditionTag"
+                    }
                 },
                 "work_info": {
                     "$ref": "#/definitions/github_com_lunovoy_friendly_internal_models.UpdateWorkInfoInput"

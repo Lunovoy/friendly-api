@@ -303,6 +303,42 @@ func (r *FriendlistPostgres) AddTagToFriendlist(friendlistID, tagID uuid.UUID) e
 	return err
 }
 
+func (r *FriendlistPostgres) AddTagsToFriendlist(userID, friendlistID uuid.UUID, tagIDs []models.AdditionTag) ([]uuid.UUID, error) {
+
+	if len(tagIDs) == 0 {
+		return nil, errors.New("empty tagIDs")
+	}
+
+	tx, err := r.db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	query := fmt.Sprintf("INSERT INTO \"%s\" (friendlist_id, tag_id) VALUES ($1, $2) RETURNING id", friendlistsTagsTable)
+
+	stmt, err := tx.Preparex(query)
+	if err != nil {
+		return nil, err
+	}
+	ids := []uuid.UUID{}
+	var id uuid.UUID
+	for _, tagID := range tagIDs {
+		row := stmt.QueryRow(friendlistID, tagID.TagID)
+		if err := row.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+
+	if len(ids) != len(tagIDs) {
+		return nil, errors.New("length of added tags not equal inserted rows")
+	}
+
+	err = tx.Commit()
+	return ids, err
+}
+
 func (r *FriendlistPostgres) AddFriendToFriendlist(friendlistID, friendID uuid.UUID) error {
 	var exists bool
 	queryCheck := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE friendlist_id = $1 AND friend_id = $2)", friendlistsFriendsTable)

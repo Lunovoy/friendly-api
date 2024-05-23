@@ -16,7 +16,7 @@ import (
 // @ID create-friendlist
 // @Accept  json
 // @Produce  json
-// @Param input body models.UpdateFriendlist true "Friendlist info"
+// @Param input body models.FriendlistWithTagsUpdate true "Friendlist info"
 // @Success 201 {string} uuid
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
@@ -29,17 +29,29 @@ func (h *Handler) createFriendlist(c *gin.Context) {
 		return
 	}
 
-	var payload models.UpdateFriendlist
+	var payload models.FriendlistWithTagsUpdate
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	friendlistID, err := h.services.Friendlist.Create(userID, payload)
+	friendlistID, err := h.services.Friendlist.Create(userID, payload.Friendlist)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	if payload.TagIDs != nil && len(payload.TagIDs) != 0 {
+		_, err = h.services.Friendlist.AddTagsToFriendlist(userID, friendlistID, payload.TagIDs)
+		if err != nil {
+			if delErr := h.services.Friendlist.DeleteByID(userID, friendlistID); delErr != nil {
+				newErrorResponse(c, http.StatusInternalServerError, delErr.Error())
+			}
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
 	c.JSON(http.StatusCreated, map[string]any{
 		"friendlist_id": friendlistID,
 	})

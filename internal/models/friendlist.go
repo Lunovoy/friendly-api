@@ -36,6 +36,11 @@ type FriendlistWithTags struct {
 	Tags       []Tag      `json:"tags"`
 }
 
+type FriendlistWithTagsUpdate struct {
+	Friendlist UpdateFriendlist `json:"friendlist"`
+	TagIDs     []AdditionTag    `json:"tag_ids"`
+}
+
 type FriendlistFull struct {
 	FriendlistWithTags FriendlistWithTags   `json:"friendlist"`
 	FriendsWithTags    []FriendWorkInfoTags `json:"friends"`

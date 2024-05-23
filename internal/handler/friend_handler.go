@@ -40,6 +40,18 @@ func (h *Handler) createFriend(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	if payload.TagIDs != nil && len(payload.TagIDs) != 0 {
+		_, err = h.services.Friend.AddTagsToFriend(userID, friendIDWorkID.FriendID, payload.TagIDs)
+		if err != nil {
+			if delErr := h.services.Friend.DeleteByID(userID, friendIDWorkID.FriendID); delErr != nil {
+				newErrorResponse(c, http.StatusInternalServerError, delErr.Error())
+			}
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
 	c.JSON(http.StatusCreated, map[string]any{
 		"friend_id":    friendIDWorkID.FriendID,
 		"work_info_id": friendIDWorkID.WorkInfoID,
@@ -278,6 +290,7 @@ func (h *Handler) addTagToFriend(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	c.JSON(http.StatusCreated, statusResponse{
 		Status: "ok",
 	},

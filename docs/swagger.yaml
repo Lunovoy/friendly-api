@@ -171,6 +171,15 @@ definitions:
           $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.Tag'
         type: array
     type: object
+  github_com_lunovoy_friendly_internal_models.FriendlistWithTagsUpdate:
+    properties:
+      friendlist:
+        $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendlist'
+      tag_ids:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.AdditionTag'
+        type: array
+    type: object
   github_com_lunovoy_friendly_internal_models.Reminder:
     properties:
       event_id:
@@ -217,6 +226,10 @@ definitions:
     properties:
       friend:
         $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendInput'
+      tag_ids:
+        items:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.AdditionTag'
+        type: array
       work_info:
         $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateWorkInfoInput'
     type: object
@@ -1148,7 +1161,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.UpdateFriendlist'
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.FriendlistWithTagsUpdate'
       produces:
       - application/json
       responses:

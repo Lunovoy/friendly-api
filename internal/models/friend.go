@@ -32,6 +32,7 @@ type FriendWorkInfoTags struct {
 type UpdateFriendWorkInfoInput struct {
 	Friend   *UpdateFriendInput   `json:"friend"`
 	WorkInfo *UpdateWorkInfoInput `json:"work_info"`
+	TagIDs   []AdditionTag        `json:"tag_ids"`
 }
 
 type FriendIDWorkInfoID struct {

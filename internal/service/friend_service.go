@@ -40,6 +40,10 @@ func (s *FriendService) AddTagToFriend(friendID, tagID uuid.UUID) error {
 	return s.repo.AddTagToFriend(friendID, tagID)
 }
 
+func (s *FriendService) AddTagsToFriend(userID, friendID uuid.UUID, tagIDs []models.AdditionTag) ([]uuid.UUID, error) {
+	return s.repo.AddTagsToFriend(userID, friendID, tagIDs)
+}
+
 func (s *FriendService) DeleteTagFromFriend(friendID, tagID uuid.UUID) error {
 	return s.repo.DeleteTagFromFriend(friendID, tagID)
 }
