@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -30,11 +29,18 @@ func (r *TagPostgres) Create(userID uuid.UUID, tag models.Tag) (uuid.UUID, error
 	var exists bool
 	queryCheck := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE title = $1 AND user_id = $2)", tagTable)
 
-	if err := r.db.Get(&exists, queryCheck, tag.Title, userID); err != nil {
+	if err := tx.Get(&exists, queryCheck, tag.Title, userID); err != nil {
 		return uuid.Nil, err
 	}
+
+	var existsTag models.Tag
+	queryCheck = fmt.Sprintf("SELECT * FROM %s WHERE title = $1 AND user_id = $2)", tagTable)
+	if err := tx.Get(&existsTag, queryCheck, tag.Title, userID); err != nil {
+		return uuid.Nil, err
+	}
+
 	if exists {
-		return uuid.Nil, errors.New("tag already exists")
+		return uuid.Nil, fmt.Errorf("tag already exists: %s", existsTag.ID)
 	}
 
 	var tagID uuid.UUID
