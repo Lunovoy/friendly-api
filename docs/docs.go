@@ -3513,10 +3513,22 @@ const docTemplate = `{
                 "password"
             ],
             "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "communication_method": {
+                    "type": "string"
+                },
+                "company": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
                 "first_name": {
                     "type": "string"
                 },
-                "id": {
+                "language": {
                     "type": "string"
                 },
                 "last_name": {
@@ -3525,14 +3537,26 @@ const docTemplate = `{
                 "mail": {
                     "type": "string"
                 },
+                "messenger": {
+                    "type": "string"
+                },
                 "middle_name": {
+                    "type": "string"
+                },
+                "nationality": {
                     "type": "string"
                 },
                 "password": {
                     "type": "string"
                 },
-                "salt": {
+                "position": {
                     "type": "string"
+                },
+                "profession": {
+                    "type": "string"
+                },
+                "resident": {
+                    "type": "boolean"
                 },
                 "tg_username": {
                     "type": "string"
@@ -3545,10 +3569,22 @@ const docTemplate = `{
         "github_com_lunovoy_friendly_internal_models.UserUpdate": {
             "type": "object",
             "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "communication_method": {
+                    "type": "string"
+                },
+                "company": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
                 "first_name": {
                     "type": "string"
                 },
-                "id": {
+                "language": {
                     "type": "string"
                 },
                 "last_name": {
@@ -3557,8 +3593,23 @@ const docTemplate = `{
                 "mail": {
                     "type": "string"
                 },
+                "messenger": {
+                    "type": "string"
+                },
                 "middle_name": {
                     "type": "string"
+                },
+                "nationality": {
+                    "type": "string"
+                },
+                "position": {
+                    "type": "string"
+                },
+                "profession": {
+                    "type": "string"
+                },
+                "resident": {
+                    "type": "boolean"
                 },
                 "tg_username": {
                     "type": "string"

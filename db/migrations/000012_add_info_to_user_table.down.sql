@@ -1,0 +1,11 @@
+ALTER TABLE IF EXISTS "user"
+DROP COLUMN IF EXISTS "country",
+DROP COLUMN IF EXISTS "city",
+DROP COLUMN IF EXISTS "company",
+DROP COLUMN IF EXISTS "profession",
+DROP COLUMN IF EXISTS "position",
+DROP COLUMN IF EXISTS "messenger",
+DROP COLUMN IF EXISTS "communication_method",
+DROP COLUMN IF EXISTS "nationality",
+DROP COLUMN IF EXISTS "language",
+DROP COLUMN IF EXISTS "resident";
