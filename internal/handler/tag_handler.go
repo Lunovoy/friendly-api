@@ -41,6 +41,7 @@ func (h *Handler) createTag(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
 	c.JSON(http.StatusCreated, map[string]any{
 		"tag_id": tagID,
 	})

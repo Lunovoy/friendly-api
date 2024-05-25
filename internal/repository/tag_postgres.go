@@ -33,13 +33,12 @@ func (r *TagPostgres) Create(userID uuid.UUID, tag models.Tag) (uuid.UUID, error
 		return uuid.Nil, err
 	}
 
-	var existsTag models.Tag
-	queryCheck = fmt.Sprintf("SELECT * FROM %s WHERE title = $1 AND user_id = $2", tagTable)
-	if err := tx.Get(&existsTag, queryCheck, tag.Title, userID); err != nil {
-		return uuid.Nil, err
-	}
-
 	if exists {
+		var existsTag models.Tag
+		queryCheck = fmt.Sprintf("SELECT * FROM %s WHERE title = $1 AND user_id = $2", tagTable)
+		if err := tx.Get(&existsTag, queryCheck, tag.Title, userID); err != nil {
+			return uuid.Nil, err
+		}
 		return uuid.Nil, fmt.Errorf("tag already exists: %s", existsTag.ID)
 	}
 
