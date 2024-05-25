@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS "user" ADD COLUMN "image_id" UUID;
