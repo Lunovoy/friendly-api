@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "additional_info_field" (
     "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    "title" varchar(50) unique not null,
+    "title" varchar(50) not null,
     "user_id" UUID not null,
     FOREIGN KEY ("user_id") REFERENCES "user" ("id") ON DELETE CASCADE
 );

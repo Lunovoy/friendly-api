@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "event" (
     "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    "title" varchar(50) unique not null,
+    "title" varchar(50) not null,
     "description" text,
     "start_date" timestamp with time zone,
     "end_date" timestamp with time zone,

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "friendlist" (
     "id" UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    "title" varchar(50) unique not null,
+    "title" varchar(50) not null,
     "description" varchar(255) DEFAULT '',
     "image_id" UUID,
     "user_id" UUID not null,
