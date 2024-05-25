@@ -341,20 +341,27 @@ func (r *EventPostgres) UpdateFull(userID, eventID uuid.UUID, event models.Event
 	}
 
 	if event.ReminderUpdate != nil {
-		queryReminder := fmt.Sprintf("UPDATE %s SET minutes_until_event = $1 WHERE id = $2", reminderTable)
-		reminderStmt, err := tx.Preparex(queryReminder)
+		queryReminderDelete := fmt.Sprintf("DELETE FROM %s WHERE event_id=$1", reminderTable)
+		_, err := tx.Exec(queryReminderDelete, eventID)
+		if err != nil {
+			return fmt.Errorf("error deleting old reminders from event: %s", err.Error())
+		}
+
+		queryAddNew := fmt.Sprintf("INSERT INTO \"%s\" (minutes_until_event, event_id, user_id) VALUES ($1, $2, $3) RETURNING id", reminderTable)
+
+		reminderStmt, err := tx.Preparex(queryAddNew)
 		if err != nil {
 			return err
 		}
 		defer reminderStmt.Close()
 
+		var reminderID uuid.UUID
 		for _, reminder := range event.ReminderUpdate {
-			_, err := reminderStmt.Exec(*reminder.MinutesUntilEvent, *reminder.ID)
-			if err != nil {
+			row := reminderStmt.QueryRow(reminder.MinutesUntilEvent, eventID, userID)
+			if err := row.Scan(&reminderID); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if err := tx.Commit(); err != nil {
