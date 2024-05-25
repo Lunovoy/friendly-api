@@ -39,7 +39,7 @@ func (h *Handler) createTag(c *gin.Context) {
 	tagID, err := h.services.Tag.Create(userID, payload)
 	if err != nil {
 		if err.Error() == "tag already exists" {
-			c.JSON(http.StatusBadRequest, map[string]any{
+			c.JSON(http.StatusOK, map[string]any{
 				"message": err.Error(),
 				"tag_id":  tagID,
 			})
