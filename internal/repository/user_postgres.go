@@ -29,9 +29,9 @@ func (r *UserPostgres) GetByID(userID uuid.UUID) (models.User, error) {
 }
 
 func (r *UserPostgres) Update(user models.UserUpdate, userID uuid.UUID) error {
-	query := fmt.Sprintf("UPDATE \"%s\" SET username = $1, first_name = $2, last_name = $3, middle_name = $4, tg_username = $5, mail = $6, country = $7, city = $8, company = $9, profession = $10, position = $11, messenger = $12, communication_method = $13, nationality = $14, language = $15, resident = $16 WHERE id = $17", userTable)
+	query := fmt.Sprintf("UPDATE \"%s\" SET username = $1, first_name = $2, last_name = $3, middle_name = $4, tg_username = $5, mail = $6, country = $7, city = $8, company = $9, profession = $10, position = $11, messenger = $12, communication_method = $13, nationality = $14, language = $15, resident = $16, image_id = $17 WHERE id = $18", userTable)
 
-	_, err := r.db.Exec(query, user.Username, user.FirstName, user.LastName, user.MiddleName, user.TgUsername, user.Mail, user.Country, user.City, user.Company, user.Profession, user.Position, user.Messenger, user.CommunicationMethod, user.Nationality, user.Language, user.Resident, userID)
+	_, err := r.db.Exec(query, user.Username, user.FirstName, user.LastName, user.MiddleName, user.TgUsername, user.Mail, user.Country, user.City, user.Company, user.Profession, user.Position, user.Messenger, user.CommunicationMethod, user.Nationality, user.Language, user.Resident, user.ImageID, userID)
 
 	return err
 }

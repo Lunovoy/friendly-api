@@ -4,6 +4,7 @@ import "github.com/google/uuid"
 
 type User struct {
 	ID                  uuid.UUID `json:"-" db:"id"`
+	ImageID             uuid.UUID `json:"image_id" db:"image_id"`
 	Username            string    `json:"username" db:"username"`
 	FirstName           string    `json:"first_name" db:"first_name"`
 	LastName            string    `json:"last_name" db:"last_name"`
@@ -26,6 +27,7 @@ type User struct {
 
 type UserUpdate struct {
 	ID                  uuid.UUID `json:"-" db:"id"`
+	ImageID             uuid.UUID `json:"image_id" db:"image_id"`
 	Username            string    `json:"username" db:"username"`
 	FirstName           string    `json:"first_name" db:"first_name"`
 	LastName            string    `json:"last_name" db:"last_name"`
