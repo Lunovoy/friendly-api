@@ -286,6 +286,8 @@ definitions:
         type: string
       first_name:
         type: string
+      image_id:
+        type: string
       language:
         type: string
       last_name:
@@ -325,6 +327,8 @@ definitions:
       country:
         type: string
       first_name:
+        type: string
+      image_id:
         type: string
       language:
         type: string
@@ -1782,7 +1786,7 @@ paths:
           schema:
             $ref: '#/definitions/internal_handler.errorResponse'
         "415":
-          description: Invalid file type. Only JPG files are allowed.
+          description: Invalid file type. Only JPG, PNG, HEIC files are allowed.
           schema:
             $ref: '#/definitions/internal_handler.errorResponse'
         "500":
@@ -1798,12 +1802,18 @@ paths:
       summary: Upload Image
       tags:
       - image
-  /api/image/:id:
+  /api/image/{id}:
     delete:
       consumes:
       - application/json
       description: delete image by ID
       operationId: delete-image
+      parameters:
+      - description: Image ID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:

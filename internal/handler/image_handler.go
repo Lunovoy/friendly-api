@@ -4,14 +4,18 @@ import (
 	"fmt"
 	"image"
 	"image/jpeg"
+	"image/png"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jdeng/goheif"
 	"github.com/nfnt/resize"
+	_ "golang.org/x/image/webp"
 )
 
 // @Summary Upload Image
@@ -24,7 +28,7 @@ import (
 // @Param image formData file true "Image file to upload"
 // @Success 201 {object} map[string]any "Successfully uploaded image"
 // @Failure 400 {object} errorResponse
-// @Failure 415 {object} errorResponse "Invalid file type. Only JPG files are allowed."
+// @Failure 415 {object} errorResponse "Invalid file type. Only JPG, PNG, HEIC files are allowed."
 // @Failure 500 {object} errorResponse "Internal server error"
 // @Failure default {object} errorResponse
 // @Router /api/image [post]
@@ -40,9 +44,11 @@ func (h *Handler) uploadImage(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
+	inputFileType := file.Header.Get("Content-Type")
+
 	// Проверяем тип файла
-	if file.Header.Get("Content-Type") != "image/jpeg" {
-		c.JSON(http.StatusUnsupportedMediaType, gin.H{"error": "Invalid file type. Only JPG files are allowed."})
+	if inputFileType != "image/jpeg" && inputFileType != "image/jpg" && inputFileType != "image/png" && inputFileType != "image/heif" {
+		c.JSON(http.StatusUnsupportedMediaType, gin.H{"error": "Invalid file type. Only JPG, PNG, HEIC/HEIF files are allowed."})
 		return
 	}
 
@@ -101,25 +107,48 @@ func (h *Handler) getImage(c *gin.Context) {
 		newErrorResponse(c, http.StatusBadRequest, "invalid param")
 		return
 	}
-	filePath := fmt.Sprintf("%s%s%s", uploadDir, imageID, imageExtension)
+	filePath := fmt.Sprintf("%s%s", uploadDir, imageID)
 
-	// Проверяем, существует ли файл с таким именем
-	_, err = os.Stat(filePath)
-	if err != nil {
+	// Определяем расширение файла
+	fileExtensions := []string{".jpg", ".jpeg", ".png", ".heic", ".HEIC", ".heif"}
+	var imageFile string
+	for _, ext := range fileExtensions {
+		if _, err := os.Stat(filePath + ext); err == nil {
+			imageFile = filePath + ext
+			break
+		}
+	}
+	if imageFile == "" {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Image not found"})
 		return
 	}
 
 	// Открываем файл
-	file, err := os.Open(filePath)
+	file, err := os.Open(imageFile)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open file"})
 		return
 	}
 	defer file.Close()
-
 	// Декодируем изображение
-	img, _, err := image.Decode(file)
+	var img image.Image
+	switch filepath.Ext(imageFile) {
+	case ".jpg", ".jpeg":
+		img, err = jpeg.Decode(file)
+	case ".png":
+		img, err = png.Decode(file)
+	case ".heic", ".HEIC", ".heif":
+		// Для формата HEIC требуется специальная обработка
+		heifImg, err := goheif.Decode(file)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "error decoding heic"})
+			return
+		}
+		img = heifImg
+	default:
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unsupported image format"})
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to decode image"})
 		return
@@ -136,7 +165,6 @@ func (h *Handler) getImage(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to copy file contents"})
 		return
 	}
-
 }
 
 // @Summary Delete Image
@@ -153,12 +181,28 @@ func (h *Handler) getImage(c *gin.Context) {
 // @Failure default {object} errorResponse
 // @Router /api/image/{id} [delete]
 func (h *Handler) deleteImage(c *gin.Context) {
-	friendID := c.Param("id")
-	filePath := fmt.Sprintf("%s%s", uploadDir, friendID+".jpg")
+	id := c.Param("id")
+	fileExtensions := []string{".jpg", ".jpeg", ".png", ".heif", ".HEIC", ".heic"}
+
+	var filePath string
+	var fileFound bool
+	for _, ext := range fileExtensions {
+		path := fmt.Sprintf("%s%s%s", uploadDir, id, ext)
+		if _, err := os.Stat(path); err == nil {
+			filePath = path
+			fileFound = true
+			break
+		}
+	}
+
+	if !fileFound {
+		newErrorResponse(c, http.StatusNotFound, "Image not found")
+		return
+	}
 
 	// Удаляем файл с сервера
 	if err := deleteFile(filePath); err != nil {
-		newErrorResponse(c, http.StatusNotFound, fmt.Sprintf("Failed to delete file: %s", err.Error()))
+		newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("Failed to delete file: %s", err.Error()))
 		return
 	}
 

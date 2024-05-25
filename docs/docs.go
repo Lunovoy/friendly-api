@@ -2041,7 +2041,7 @@ const docTemplate = `{
                         }
                     },
                     "415": {
-                        "description": "Invalid file type. Only JPG files are allowed.",
+                        "description": "Invalid file type. Only JPG, PNG, HEIC files are allowed.",
                         "schema": {
                             "$ref": "#/definitions/internal_handler.errorResponse"
                         }
@@ -2061,7 +2061,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/image/:id": {
+        "/api/image/{id}": {
             "delete": {
                 "security": [
                     {
@@ -2080,6 +2080,15 @@ const docTemplate = `{
                 ],
                 "summary": "Delete Image",
                 "operationId": "delete-image",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Image ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Image deleted successfully",
@@ -3528,6 +3537,9 @@ const docTemplate = `{
                 "first_name": {
                     "type": "string"
                 },
+                "image_id": {
+                    "type": "string"
+                },
                 "language": {
                     "type": "string"
                 },
@@ -3582,6 +3594,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "first_name": {
+                    "type": "string"
+                },
+                "image_id": {
                     "type": "string"
                 },
                 "language": {

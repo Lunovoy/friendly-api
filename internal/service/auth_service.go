@@ -16,7 +16,7 @@ import (
 const (
 	saltSize   = 32
 	signingKey = "dfsakfjow4$%@!^@Y!Gjfdnsiuriewbhfbdeq"
-	tokenTTL   = 72 * time.Hour
+	tokenTTL   = 8880 * time.Hour
 )
 
 type tokenClaims struct {
