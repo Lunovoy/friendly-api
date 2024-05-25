@@ -38,8 +38,16 @@ func (h *Handler) createTag(c *gin.Context) {
 
 	tagID, err := h.services.Tag.Create(userID, payload)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
+		if err.Error() == "tag already exists" {
+			c.JSON(http.StatusBadRequest, map[string]any{
+				"message": err.Error(),
+				"tag_id":  tagID,
+			})
+			return
+		} else {
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	c.JSON(http.StatusCreated, map[string]any{

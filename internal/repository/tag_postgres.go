@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -39,7 +40,7 @@ func (r *TagPostgres) Create(userID uuid.UUID, tag models.Tag) (uuid.UUID, error
 		if err := tx.Get(&existsTag, queryCheck, tag.Title, userID); err != nil {
 			return uuid.Nil, err
 		}
-		return uuid.Nil, fmt.Errorf("tag already exists: %s", existsTag.ID)
+		return existsTag.ID, errors.New("tag already exists")
 	}
 
 	var tagID uuid.UUID
