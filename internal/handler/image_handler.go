@@ -146,11 +146,12 @@ func (h *Handler) getImage(c *gin.Context) {
 // @ID delete-image
 // @Accept  json
 // @Produce  json
+// @Param id path string true "Image ID"
 // @Success 200 {object} map[string]string "Image deleted successfully"
 // @Failure 404 {object} errorResponse "Image not found"
 // @Failure 500 {object} errorResponse "Internal server error"
 // @Failure default {object} errorResponse
-// @Router /api/image/:id [delete]
+// @Router /api/image/{id} [delete]
 func (h *Handler) deleteImage(c *gin.Context) {
 	friendID := c.Param("id")
 	filePath := fmt.Sprintf("%s%s", uploadDir, friendID+".jpg")
