@@ -24,10 +24,9 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-
 	api := router.Group("/api")
 	{
+		api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 		auth := api.Group("/auth")
 		{
