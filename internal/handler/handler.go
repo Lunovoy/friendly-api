@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/lunovoy/friendly/internal/service"
 	swaggerfiles "github.com/swaggo/files"
@@ -24,31 +22,17 @@ func NewHandler(services *service.Service) *Handler {
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
-	apiEngine := gin.New()
+	r := gin.New()
 
-	// apiEngine.NoRoute(gin.WrapH(http.FileServer(gin.Dir("./", false))))
-	// apiEngine.StaticFS("/static", http.Dir("./"))
-	// apiEngine.StaticFS("/static/friends", http.Dir("./"))
-	// apiEngine.StaticFS("/static/events", http.Dir("./"))
-	// apiEngine.StaticFS("/friends", http.Dir("./"))
-	// apiEngine.StaticFS("/events", http.Dir("./"))
-	// apiEngine.StaticFS("/groups", http.Dir("./"))
+	r.GET("/swagger/", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	// static := apiEngine.Group("/static")
-	// {
-	// 	static.StaticFS("/", http.Dir("./"))
-	// 	static.StaticFS("/friends", http.Dir("./"))
-	// }
-
-	apiEngine.GET("/swagger/", ginSwagger.WrapHandler(swaggerfiles.Handler))
-
-	auth := apiEngine.Group("/auth")
+	auth := r.Group("/auth")
 	{
 		auth.POST("/sign-in", h.signIn)
 		auth.POST("/sign-up", h.signUp)
 	}
 
-	api := apiEngine.Group("/api", h.userIdentity)
+	api := r.Group("/api", h.userIdentity)
 	{
 		profile := api.Group("/profile")
 		{
@@ -135,24 +119,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			image.DELETE("/:id", h.deleteImage)
 		}
 	}
-
-	// Основной роутер для обработки всех запросов
-	r := gin.New()
-
-	// Настройка статических маршрутов
-	r.Static("/friends", "./")
-	r.Static("/events", "./")
-	r.Static("/groups", "./")
-
-	// Обработка всех остальных запросов через API
-	r.NoRoute(func(c *gin.Context) {
-		path := c.Request.URL.Path
-		if strings.HasPrefix(path, "/api") || strings.HasPrefix(path, "/auth") || strings.HasPrefix(path, "/swagger") {
-			apiEngine.HandleContext(c)
-		} else {
-			c.File("." + path)
-		}
-	})
 
 	return r
 }
