@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/lunovoy/friendly/internal/service"
@@ -24,29 +24,31 @@ func NewHandler(services *service.Service) *Handler {
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
-	router := gin.New()
+	apiEngine := gin.New()
 
-	router.NoRoute(gin.WrapH(http.FileServer(gin.Dir("./", false))))
-	// router.StaticFS("/", http.Dir("./"))
-	// router.StaticFS("/friends", http.Dir("./"))
-	// router.StaticFS("/events", http.Dir("./"))
-	// router.StaticFS("/groups", http.Dir("./"))
+	// apiEngine.NoRoute(gin.WrapH(http.FileServer(gin.Dir("./", false))))
+	// apiEngine.StaticFS("/static", http.Dir("./"))
+	// apiEngine.StaticFS("/static/friends", http.Dir("./"))
+	// apiEngine.StaticFS("/static/events", http.Dir("./"))
+	// apiEngine.StaticFS("/friends", http.Dir("./"))
+	// apiEngine.StaticFS("/events", http.Dir("./"))
+	// apiEngine.StaticFS("/groups", http.Dir("./"))
 
-	// static := router.Group("/static")
+	// static := apiEngine.Group("/static")
 	// {
 	// 	static.StaticFS("/", http.Dir("./"))
 	// 	static.StaticFS("/friends", http.Dir("./"))
 	// }
 
-	router.GET("/swagger/", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	apiEngine.GET("/swagger/", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	auth := router.Group("/auth")
+	auth := apiEngine.Group("/auth")
 	{
 		auth.POST("/sign-in", h.signIn)
 		auth.POST("/sign-up", h.signUp)
 	}
 
-	api := router.Group("/api", h.userIdentity)
+	api := apiEngine.Group("/api", h.userIdentity)
 	{
 		profile := api.Group("/profile")
 		{
@@ -134,5 +136,23 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		}
 	}
 
-	return router
+	// Основной роутер для обработки всех запросов
+	r := gin.New()
+
+	// Настройка статических маршрутов
+	r.Static("/friends", "./")
+	r.Static("/events", "./")
+	r.Static("/groups", "./")
+
+	// Обработка всех остальных запросов через API
+	r.NoRoute(func(c *gin.Context) {
+		path := c.Request.URL.Path
+		if strings.HasPrefix(path, "/api") || strings.HasPrefix(path, "/auth") || strings.HasPrefix(path, "/swagger") {
+			apiEngine.HandleContext(c)
+		} else {
+			c.File("." + path)
+		}
+	})
+
+	return r
 }
