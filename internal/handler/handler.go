@@ -25,9 +25,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
 	// router.NoRoute(gin.WrapH(http.FileServer(gin.Dir("./", false))))
-	router.StaticFS("/friends", gin.Dir("./", false))
-	router.StaticFS("/events", gin.Dir("./", false))
-	router.StaticFS("/groups", gin.Dir("./", false))
+	router.Static("/friends", "./")
+	router.Static("/events", "./")
+	router.Static("/groups", "./")
 
 	router.GET("/swagger/", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
