@@ -471,13 +471,91 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
-host: 80.78.243.140
+host: localhost:8080
 info:
   contact: {}
   description: API Server for Friendly Application
   title: Friendly app API
   version: "1.0"
 paths:
+  /api/auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: login
+      operationId: login
+      parameters:
+      - description: credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.signInPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      summary: SignIn
+      tags:
+      - auth
+  /api/auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: create account
+      operationId: create-account
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/internal_handler.errorResponse'
+      summary: SignUp
+      tags:
+      - auth
   /api/event:
     get:
       consumes:
@@ -2391,84 +2469,6 @@ paths:
       summary: Update Tag
       tags:
       - tag
-  /auth/sign-in:
-    post:
-      consumes:
-      - application/json
-      description: login
-      operationId: login
-      parameters:
-      - description: credentials
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/internal_handler.signInPayload'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: token
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-      summary: SignIn
-      tags:
-      - auth
-  /auth/sign-up:
-    post:
-      consumes:
-      - application/json
-      description: create account
-      operationId: create-account
-      parameters:
-      - description: account info
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_lunovoy_friendly_internal_models.User'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: integer
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/internal_handler.errorResponse'
-      summary: SignUp
-      tags:
-      - auth
 securityDefinitions:
   ApiKeyAuth:
     in: header

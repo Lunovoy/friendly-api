@@ -26,21 +26,22 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	auth := router.Group("/auth")
+	api := router.Group("/api")
 	{
-		auth.POST("/sign-in", h.signIn)
-		auth.POST("/sign-up", h.signUp)
-	}
 
-	api := router.Group("/api", h.userIdentity)
-	{
-		profile := api.Group("/profile")
+		auth := api.Group("/auth")
+		{
+			auth.POST("/sign-in", h.signIn)
+			auth.POST("/sign-up", h.signUp)
+		}
+
+		profile := api.Group("/profile", h.userIdentity)
 		{
 			profile.GET("/", h.getProfile)
 			profile.PUT("/", h.updateProfile)
 		}
 
-		tags := api.Group("/tag")
+		tags := api.Group("/tag", h.userIdentity)
 		{
 			tags.POST("/", h.createTag)
 			tags.GET("/", h.getAllTags)
@@ -49,7 +50,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			tags.DELETE("/:id", h.deleteTag)
 		}
 
-		friendlist := api.Group("/friendlist")
+		friendlist := api.Group("/friendlist", h.userIdentity)
 		{
 			friendlist.POST("/", h.createFriendlist)
 			friendlist.GET("/", h.getAllFriendlists)
@@ -68,7 +69,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			friendlist.DELETE("/:id/friend/:friend_id", h.deleteFriendFromFriendlist)
 		}
 
-		friend := api.Group("/friend")
+		friend := api.Group("/friend", h.userIdentity)
 		{
 			friend.POST("/", h.createFriend)
 			friend.GET("/", h.getAllFriends)
@@ -79,7 +80,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			friend.DELETE("/:id/tag/:tag_id", h.deleteTagFromFriend)
 		}
 
-		event := api.Group("/event")
+		event := api.Group("/event", h.userIdentity)
 		{
 			event.POST("/", h.createEvent)
 			event.POST("/:id/friends", h.addFriendsToEvent)
@@ -93,7 +94,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			event.DELETE("/:id", h.deleteEvent)
 		}
 
-		reminder := api.Group("/reminder")
+		reminder := api.Group("/reminder", h.userIdentity)
 		{
 			reminder.POST("/", h.createReminder)
 			reminder.GET("/", h.getAllReminders)
@@ -103,7 +104,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			reminder.DELETE("/:id", h.deleteReminder)
 		}
 
-		additionalInfoField := api.Group("/additional-field")
+		additionalInfoField := api.Group("/additional-field", h.userIdentity)
 		{
 			additionalInfoField.POST("/", h.createAdditionalInfoField)
 			additionalInfoField.GET("/", h.getAllAdditionalFields)
@@ -112,7 +113,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			additionalInfoField.DELETE("/:id", h.deleteAdditionalField)
 		}
 
-		image := api.Group("/image")
+		image := api.Group("/image", h.userIdentity)
 		{
 			image.POST("/", h.uploadImage)
 			image.GET("/:id/:res", h.getImage)

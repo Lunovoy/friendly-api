@@ -23,7 +23,7 @@ type signInPayload struct {
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /auth/sign-up [post]
+// @Router /api/auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
 	var payload models.User
 
@@ -54,7 +54,7 @@ func (h *Handler) signUp(c *gin.Context) {
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
-// @Router /auth/sign-in [post]
+// @Router /api/auth/sign-in [post]
 func (h *Handler) signIn(c *gin.Context) {
 	var payload signInPayload
 
