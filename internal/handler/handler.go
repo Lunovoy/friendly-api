@@ -22,17 +22,17 @@ func NewHandler(services *service.Service) *Handler {
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
-	r := gin.New()
+	router := gin.New()
 
-	r.GET("/swagger/", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	auth := r.Group("/auth")
+	auth := router.Group("/auth")
 	{
 		auth.POST("/sign-in", h.signIn)
 		auth.POST("/sign-up", h.signUp)
 	}
 
-	api := r.Group("/api", h.userIdentity)
+	api := router.Group("/api", h.userIdentity)
 	{
 		profile := api.Group("/profile")
 		{
@@ -120,5 +120,5 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		}
 	}
 
-	return r
+	return router
 }
