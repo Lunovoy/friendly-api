@@ -26,7 +26,7 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	router.NoRoute(gin.WrapH(http.FileServer(gin.Dir("./", false))))
+	router.NoRoute(gin.WrapH(http.FileServer(gin.Dir("./*", false))))
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	auth := router.Group("/auth")
