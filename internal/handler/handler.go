@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/lunovoy/friendly/internal/service"
 	swaggerfiles "github.com/swaggo/files"
@@ -26,8 +24,12 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
-	router.NoRoute(gin.WrapH(http.FileServer(gin.Dir("./*", false))))
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+	// router.NoRoute(gin.WrapH(http.FileServer(gin.Dir("./", false))))
+	router.StaticFS("/friends", gin.Dir("./", false))
+	router.StaticFS("/events", gin.Dir("./", false))
+	router.StaticFS("/groups", gin.Dir("./", false))
+
+	router.GET("/swagger/", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	auth := router.Group("/auth")
 	{
