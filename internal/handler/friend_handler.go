@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -55,6 +58,51 @@ func (h *Handler) createFriend(c *gin.Context) {
 			newErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
+	}
+
+	friend, err := h.services.Friend.GetByID(userID, friendIDWorkID.FriendID)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if friend.Friend.DOB.Valid {
+
+		eventDate := time.Date(time.Now().Year(), friend.Friend.DOB.Time.Month(), friend.Friend.DOB.Time.Day(), friend.Friend.DOB.Time.Hour(), friend.Friend.DOB.Time.Minute(), 0, 0, friend.Friend.DOB.Time.Location())
+		if eventDate.Before(time.Now()) {
+			eventDate = eventDate.AddDate(1, 0, 0)
+		}
+
+		eventID, err := h.services.Event.Create(userID, models.Event{
+			Title:       fmt.Sprintf("День рождение: %s %s", friend.Friend.FirstName, friend.Friend.LastName),
+			Description: fmt.Sprintf("%s %s", friend.WorkInfo.City, friend.WorkInfo.Company),
+			Frequency:   "annually",
+			StartDate: sql.NullTime{
+				Time:  eventDate,
+				Valid: true,
+			},
+			EndDate: sql.NullTime{
+				Time:  eventDate.Add(5 * time.Minute),
+				Valid: true,
+			},
+		})
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("error while creating dob event of friend: %s", err.Error()))
+			return
+		}
+		log.Printf("event dob created: %s", eventID)
+		var friends []models.FriendID
+		friends = append(friends, models.FriendID{FriendID: friend.Friend.ID})
+		_, err = h.services.Event.AddFriendsToEvent(userID, eventID, friends)
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("error while adding friend to event of friend dob: %s", err.Error()))
+			return
+		}
+		_, err = h.services.Reminder.Create(userID, models.Reminder{EventID: eventID, MinutesUntilEvent: 0})
+		if err != nil {
+			newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("error while adding friend to event of friend dob: %s", err.Error()))
+			return
+		}
+		friends = nil
 	}
 
 	c.JSON(http.StatusCreated, map[string]any{
