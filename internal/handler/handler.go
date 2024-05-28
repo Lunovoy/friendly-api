@@ -112,7 +112,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			additionalInfoField.DELETE("/:id", h.deleteAdditionalField)
 		}
 
-		image := api.Group("/image", h.userIdentity)
+		image := api.Group("/image")
 		{
 			image.POST("/", h.uploadImage)
 			image.GET("/:id/:res", h.getImage)
