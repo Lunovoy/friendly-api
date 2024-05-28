@@ -44,7 +44,7 @@ func (r *EventPostgres) Create(userID uuid.UUID, event models.Event) (uuid.UUID,
 func (r *EventPostgres) AddFriendsToEvent(userID, eventID uuid.UUID, friendIDs []models.FriendID) ([]uuid.UUID, error) {
 
 	if len(friendIDs) == 0 {
-		return nil, errors.New("empty friendIDs")
+		return nil, nil
 	}
 
 	tx, err := r.db.Beginx()
