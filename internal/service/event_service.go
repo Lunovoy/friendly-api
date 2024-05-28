@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/lunovoy/friendly/internal/models"
@@ -38,6 +39,10 @@ func (s *EventService) isFrequencyValid(frequency string) bool {
 func (s *EventService) Create(userID uuid.UUID, event models.Event) (uuid.UUID, error) {
 	if !s.isFrequencyValid(event.Frequency) {
 		return uuid.Nil, errors.New("frequency is not valid")
+	}
+	if !event.EndDate.Valid {
+		event.EndDate.Time = event.StartDate.Time.Add(5 * time.Minute)
+		event.EndDate.Valid = true
 	}
 	return s.repo.Create(userID, event)
 }
