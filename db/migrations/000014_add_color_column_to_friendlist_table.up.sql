@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS "friendlist" ADD COLUMN IF NOT EXISTS "color" varchar(50) DEFAULT '';

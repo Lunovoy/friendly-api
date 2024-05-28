@@ -38,6 +38,10 @@ func (r *FriendlistPostgres) Create(userID uuid.UUID, friendlist models.UpdateFr
 		friendlistFields = append(friendlistFields, "description")
 		friendlistValues = append(friendlistValues, *friendlist.Description)
 	}
+	if friendlist.Color != nil {
+		friendlistFields = append(friendlistFields, "color")
+		friendlistValues = append(friendlistValues, *friendlist.Color)
+	}
 	if friendlist.ImageID != nil {
 		friendlistFields = append(friendlistFields, "image_id")
 		friendlistValues = append(friendlistValues, *friendlist.ImageID)
@@ -259,6 +263,9 @@ func (r *FriendlistPostgres) Update(userID, friendlistID uuid.UUID, friendlist m
 	}
 	if friendlist.Description != nil {
 		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("description", *friendlist.Description))
+	}
+	if friendlist.Color != nil {
+		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("color", *friendlist.Color))
 	}
 	if friendlist.ImageID != nil {
 		friendlistFieldsWithValues = append(friendlistFieldsWithValues, builderFriendlist.Assign("image_id", *friendlist.ImageID))

@@ -1,0 +1,1 @@
+ALTER TABLE IF EXISTS "friendlist" DROP COLUMN IF EXISTS "color";

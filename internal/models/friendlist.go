@@ -8,6 +8,7 @@ type Friendlist struct {
 	ID          uuid.UUID `json:"id,omitempty" db:"id"`
 	Title       string    `json:"title" db:"title" binding:"required"`
 	Description string    `json:"description" db:"description"`
+	Color       string    `json:"color" db:"color"`
 	ImageID     uuid.UUID `json:"image_id" db:"image_id"`
 	UserID      uuid.UUID `json:"user_id" db:"user_id"`
 }
@@ -15,6 +16,7 @@ type Friendlist struct {
 type UpdateFriendlist struct {
 	Title       *string    `json:"title" db:"title"`
 	Description *string    `json:"description" db:"description"`
+	Color       *string    `json:"color" db:"color"`
 	ImageID     *uuid.UUID `json:"image_id" db:"image_id"`
 	UserID      *uuid.UUID `json:"user_id" db:"user_id"`
 }
