@@ -24,7 +24,7 @@ const uploadDir = "./images/"
 // @version 1.0
 // @description API Server for Friendly Application
 
-// @host http://89.111.170.101
+// @host 89.111.170.101
 // host localhost:8080
 // @BasePath /
 
