@@ -3291,6 +3291,9 @@
                 "title"
             ],
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -3460,6 +3463,9 @@
         "github_com_lunovoy_friendly_internal_models.UpdateFriendlist": {
             "type": "object",
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },

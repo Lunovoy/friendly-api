@@ -3297,6 +3297,9 @@ const docTemplate = `{
                 "title"
             ],
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -3466,6 +3469,9 @@ const docTemplate = `{
         "github_com_lunovoy_friendly_internal_models.UpdateFriendlist": {
             "type": "object",
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },

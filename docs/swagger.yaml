@@ -131,6 +131,8 @@ definitions:
     type: object
   github_com_lunovoy_friendly_internal_models.Friendlist:
     properties:
+      color:
+        type: string
       description:
         type: string
       id:
@@ -242,6 +244,8 @@ definitions:
     type: object
   github_com_lunovoy_friendly_internal_models.UpdateFriendlist:
     properties:
+      color:
+        type: string
       description:
         type: string
       image_id:
