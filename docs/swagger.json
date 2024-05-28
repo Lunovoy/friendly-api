@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "80.78.243.140",
+    "host": "http://89.111.170.101",
     "basePath": "/",
     "paths": {
         "/api/auth/sign-in": {

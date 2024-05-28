@@ -471,7 +471,7 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
-host: 80.78.243.140
+host: http://89.111.170.101
 info:
   contact: {}
   description: API Server for Friendly Application
