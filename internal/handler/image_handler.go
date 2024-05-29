@@ -35,7 +35,7 @@ import (
 func (h *Handler) uploadImage(c *gin.Context) {
 
 	if err := c.Request.ParseMultipartForm(maxFileSize); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "File size exceeds the maximum allowed size 5MB"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "File size exceeds the maximum allowed size 8MB"})
 	}
 	uuid := uuid.NewString()
 

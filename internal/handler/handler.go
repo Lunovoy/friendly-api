@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	maxFileSize    = 5 << 20 // 5MB
+	maxFileSize    = 8 << 20 // 8MB
 	uploadDir      = "./images/"
 	imageExtension = ".jpg"
 )
