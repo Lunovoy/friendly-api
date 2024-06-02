@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/lunovoy/friendly/internal/models"
 )
 
@@ -30,6 +31,10 @@ func (h *Handler) signUp(c *gin.Context) {
 	if err := c.BindJSON(&payload); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
+	}
+
+	if payload.ImageID.String() == "" {
+		payload.ImageID = uuid.Nil
 	}
 
 	userID, err := h.services.Authorization.CreateUser(payload)
