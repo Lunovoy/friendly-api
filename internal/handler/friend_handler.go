@@ -99,7 +99,7 @@ func (h *Handler) createFriend(c *gin.Context) {
 		}
 		_, err = h.services.Reminder.Create(userID, models.Reminder{EventID: eventID, MinutesUntilEvent: 0})
 		if err != nil {
-			newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("error while adding friend to event of friend dob: %s", err.Error()))
+			newErrorResponse(c, http.StatusInternalServerError, fmt.Sprintf("error while adding reminder to event of friend dob: %s", err.Error()))
 			return
 		}
 		friends = nil
