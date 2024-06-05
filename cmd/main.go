@@ -89,7 +89,6 @@ func main() {
 	if err := db.Close(); err != nil {
 		logrus.Errorf("error while closing database connection: %s", err.Error())
 	}
-
 }
 
 func initConfig() error {
